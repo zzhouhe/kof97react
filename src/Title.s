@@ -10,6 +10,7 @@
 		 jsr     0xC004C8				 |Set up sprites. seems no use
 
 		 bsr.w   InitTilesSprites
+		 |jsr     DisplaySubTitle
 		 rts
 
 InitTilesSprites:                      

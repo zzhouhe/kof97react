@@ -74,7 +74,7 @@ LoadAnimationAndPal:
         move.w  (a0)+, d3
         subq.w  #1, d3
         move.w  (a0), (0x3C0006).l      | set animation speed
-        bra.w   LoadPalEntries          | params:
+        bra.w   LoadPalBlockEntries          | params:
 | End of function LoadAnimationAndPal   |     d1: pal entry index
                                         |     d2: des index
                                         |     d3: entry nums - 1
@@ -112,7 +112,7 @@ AUTO_ANIMATION_TABLE:
         .word 0x50
         .word 0x40
         .word 0x800
-        .word 0x1270
+        .word 0x1270				|8 for title
         .word 0x90
         .word 0x60
         .word 0x800
@@ -126,14 +126,14 @@ AUTO_ANIMATION_TABLE:
 |     d2: des index
 |     d3: entry nums - 1
 
-LoadPalEntries:                                                                 
+LoadPalBlockEntries:                                                                 
         movea.l A5Seg.PAL_IN_POINT(a5), a2
         moveq   #0, d0
         move.w  d1, d0
         lea     (PAL_START).l, a3
         lsl.l   #5, d0
         adda.l  d0, a3
-_LoadPalEntries_loop:                               
+LoadPalBlockEntries_loop:                               
         andi.w  #0xFF, d2
         move.w  d2, (a2)+
         addq.w  #1, d2
@@ -146,8 +146,36 @@ _LoadPalEntries_loop:
         move.l  (a3)+, (a2)+
         move.l  (a3)+, (a2)+
         move.l  (a3)+, (a2)+
-        dbf     d3, _LoadPalEntries_loop
+        dbf     d3, LoadPalBlockEntries_loop
         bra.w   LoadPalEntries_end
+| End of function LoadPalEntries
+
+| params:
+|     a0: prt to: pal index, des index, ..., 0xFFFF
+
+LoadPalEntries:                         
+                                        
+        movea.l A5Seg.PAL_IN_POINT(a5), a2
+
+_LoadPalEntries_loop:                                 
+        moveq   #0, d0
+        move.w  (a0)+, d0
+        bmi.s   LoadPalEntries_end
+        move.w  (a0)+, (a2)
+        andi.w  #0xFF, (a2)+
+        lea     (PAL_START).l, a1
+        lsl.l   #5, d0
+        adda.l  d0, a1
+        addq.l  #2, a1
+        move.w  (a1)+, (a2)+
+        move.l  (a1)+, (a2)+
+        move.l  (a1)+, (a2)+
+        move.l  (a1)+, (a2)+
+        move.l  (a1)+, (a2)+
+        move.l  (a1)+, (a2)+
+        move.l  (a1)+, (a2)+
+        move.l  (a1)+, (a2)+
+        bra.s   _LoadPalEntries_loop
 | End of function LoadPalEntries
 
 LoadPalEntries_end:                                                             
