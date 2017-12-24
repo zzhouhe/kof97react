@@ -194,7 +194,7 @@ _title_spinLoop:                              | CODE XREF: UserTitleRoutine+4Cj
 		                                | 2 = Game in progress
 		                                | Game selection is enabled only when the mode is " 1" for the MVS. Make
 		                                | sure to change the mode to "2" when the game starts after the demo.
-		|move.l  #GameTitle, A5Seg.MainNextRoutine(a5)
+		move.l  #GameTitle, A5Seg.MainNextRoutine(a5)
 		|bra.w   GameLogicMainLoopEntry  | 这里进来就出不去了
 		rts
 		

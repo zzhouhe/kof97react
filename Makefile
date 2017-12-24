@@ -11,6 +11,7 @@ LD = gcc
 # Path to libraries and include files #
 #######################################
 
+INCDIR = src/
 TMPDIR = $(BASEDIR)/tmp
 
 ###################################
@@ -29,7 +30,7 @@ PADBYTE = 0xff
 ##############################
 
 OBJS = $(TMPDIR)/main.o $(TMPDIR)/Palette.o $(TMPDIR)/Sound.o $(TMPDIR)/FixLay.o \
-		$(TMPDIR)/Sprites.o $(TMPDIR)/Object.o
+		$(TMPDIR)/Sprites.o $(TMPDIR)/Object.o $(TMPDIR)/Title.o
 
 #####################
 # Compilation Flags #
@@ -50,8 +51,8 @@ out.bin : test.o
 test.o : $(OBJS)
 	$(LD) $(CCFLAGS) $(LDFLAGS) $(OBJS) -o $@
 
-$(TMPDIR)/%.o: %.s
-	$(AS) $(ASFLAGS) $< -o $@
+$(TMPDIR)/%.o: src/%.s
+	$(AS) -I$(INCDIR) $(ASFLAGS) $< -o $@
 
 clean:
 	rm -f $(TMPDIR)/*.*
