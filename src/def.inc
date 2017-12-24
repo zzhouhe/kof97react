@@ -67,7 +67,10 @@ A5Seg.SOUND_BUFFER = 0x593e     |size: 0x100
 
 A5Seg.FirstObjIndexInZBuf = 0x64d2
 A5Seg.pGhostBuf = 0x64d6
+A5Seg.TextOutputOffset = 0x64f6
+A5Seg.TextOutputEntryHigh = 0x64f8
+A5Seg.TextOutputDefaultPalIndex = 0x64fa
 A5Seg.PaletteSubGroupIndex = 0x66be
 
 
-A5Seg.TextOutputDefaultPalIndex = 0x64fa
+

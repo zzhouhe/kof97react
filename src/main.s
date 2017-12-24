@@ -195,7 +195,7 @@ _title_spinLoop:                              | CODE XREF: UserTitleRoutine+4Cj
 		                                | Game selection is enabled only when the mode is " 1" for the MVS. Make
 		                                | sure to change the mode to "2" when the game starts after the demo.
 		move.l  #GameTitle, A5Seg.MainNextRoutine(a5)
-		|bra.w   GameLogicMainLoopEntry  | 这里进来就出不去了
+		bra.w   GameLogicMainLoopEntry  | 这里进来就出不去了
 		rts
 		
 DEMO_END:
@@ -270,7 +270,7 @@ EUROPE_DATA:
         .ascii "SPANISH     "
         .ascii "PORTUGUESE  "
 
-IntVBlankRoutine:             |0x4b4          
+IntVBlankRoutine:             |0x4bc          
         tst.b   (BIOS_SYSTEM_MODE).l    | $10FD80 BIOS_SYSTEM_MODE
                                         | Current software mode status:
                                         | bit 7 = 0 system mode
@@ -286,7 +286,7 @@ IntVBlankRoutine:             |0x4b4
 | ---------------------------------------------------------------------------
 
 _notPassToBios:                         
-	ori     #0x700, sr              | 关掉3个中断
+		ori     #0x700, sr              | 关掉3个中断
         movem.l d0-a6, -(sp)            | 压栈保存所有的寄存器
         lea     (0x108000).l, a5     | a5指向数据区
         move.b  d0, (REG_WATCHDOG).l        | REG_DIPSW
@@ -349,10 +349,10 @@ _toRet:                                 | CODE XREF: IntVBlankRoutine+4Cj
 |                                        | IntVBlankRoutine+5Ej ...
          jsr     (SOUND_SEND).l
 |        bsr.w   UpdateKeyStartState
-|        jsr     0xC0044A                | Should be called at the end of the VBlank interrupt routine.
+        jsr     0xC0044A                | Should be called at the end of the VBlank interrupt routine.
 |                                        | Reads coin and game select inputs, jumps to COIN_SOUND,
 |                                        | PLAYER_START or DEMO_END accordingly.
-|        lea     (unk_108000).l, a5
+        lea     (0x108000).l, a5
 |        jsr     PalDebugRoutine
         move.b  #1, A5Seg.VBlankSpinEvent(a5) | 0: cpu tell the veo-sys need to update one frame
                                         | 1: veo-sys tell cpu that update done
@@ -432,7 +432,7 @@ SetBackgroundNoUse:
 | End of function SetBackgroundNoUse
 
 
-GameLogicMainLoopEntry:                 
+GameLogicMainLoopEntry:           |0x5b4      
 _MainLoopStart:                         
         move.b  #0, A5Seg.VBlankSpinEvent(a5) 
         andi.b  #0x7F, A5Seg.TileUpdateFlag(a5) | bit0: 1, vert pos need update for buf_main

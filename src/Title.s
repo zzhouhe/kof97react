@@ -2,16 +2,20 @@
 .globl  GameTitle
 
  GameTitle:                              
-         moveq   #8, d0
-         jsr     LoadAnimationAndPal     | params:
-                                         |     d0: index
-         jsr     InitObjectPool
-         jsr     ClearFixlay
-		 jsr     0xC004C8				 |Set up sprites. seems no use
+        moveq   #8, d0
+        jsr     LoadAnimationAndPal     | params:
+                                        |     d0: index
+        jsr     InitObjectPool
+        jsr     ClearFixlay
+		jsr     0xC004C8				 |Set up sprites. seems no use
 
-		 bsr.w   InitTilesSprites
-		 |jsr     DisplaySubTitle
-		 rts
+		bsr.w   InitTilesSprites
+		jsr     DisplaySubTitle
+
+		move.l  #_GameTitle_step2, Object(a4)
+
+_GameTitle_step2:                               | DATA XREF: GameTitle+ECo
+		rts
 
 InitTilesSprites:                      
         move.w  #0x5040, A5Seg.BackUpTileOffsetInSCB1_Main(a5)			|0x141 * 0x40
@@ -45,3 +49,91 @@ InitTilesSprites:
 |        clr.w   A5Seg.BackDoorColor(a5)
         rts
 | END OF FUNCTION CHUNK FOR sub_870A8
+
+DisplaySubTitle:                        | CODE XREF: GameTitle+38p
+                                        | ROM:0000E93Cp
+        move.b  #0xFF, A5Seg.TextOutputDefaultPalIndex(a5) | bit0~4: Pal index
+                                        | bit7: 0, use this index
+        lea     (SNK_LOGO).l, a0
+        bsr.w   DisplaySNKlogo          | params:
+|                                       |     a0: prt to: addr(w), width(b)-1, height(b)-1, data(w)
+|        lea     (word_A1572).l, a0
+|        cmpi.b  #0, A5Seg.CountryCodeAndLanguage(a5) | 0:Japan,
+|                                        | 1:USA,
+|                                        | 2:Europe
+|        beq.s   loc_7640
+|        lea     (word_A158B).l, a0
+        lea     (SNK_CORP).l, a0
+|
+|loc_7640:                               | CODE XREF: DisplaySubTitle+1Cj
+        bsr.w   SetFixlayText           | params:
+|                                        |     a0: ptr to fixlay output struct
+        rts
+| End of function DisplaySubTitle
+
+| params:
+|     a0: prt to: addr(w), width(b)-1, height(b)-1, data(w)
+
+DisplaySNKlogo:                        
+        move.w  (a0)+, d0
+                              
+        moveq   #0, d2
+        moveq   #0, d3
+        move.b  (a0)+, d2
+        move.b  (a0)+, d3
+_DisplaySNKlogo_loopOut:                                | CODE XREF: DisplaySNKlogo+2Cj
+        move.w  d0, d1
+        move.w  d2, d4
+
+_DisplaySNKlogo_loopIn:                                 | CODE XREF: DisplaySNKlogo+26j
+        swap    d1
+        move.w  (a0)+, d1
+        move.l  d1, (0x3C0000).l        | REG_VRAMADDR
+        swap    d1
+        addi.w  #0x20, d1
+        dbf     d4, _DisplaySNKlogo_loopIn
+        addq.w  #1, d0
+        dbf     d3, _DisplaySNKlogo_loopOut
+        rts
+| End of function DisplaySNKlogo
+
+SNK_LOGO:.word 0x7058                   | DATA XREF: DisplaySubTitle+6o
+        .byte 9
+        .byte    2
+        .word 0xF200
+        .word 0xF201
+        .word 0xF202
+        .word 0xF203
+        .word 0xF204
+        .word 0xF205
+        .word 0xF206
+        .word 0xF207
+        .word 0xF208
+        .word 0xF209
+        .word 0xF20A
+        .word 0xF20B
+        .word 0xF20C
+        .word 0xF20D
+        .word 0xF20E
+        .word 0xF20F
+        .word 0xF214
+        .word 0xF215
+        .word 0xF216
+        .word 0xF217
+        .word 0xF218
+        .word 0xF219
+        .word 0xF21A
+        .word 0xF21B
+        .word 0xF21C
+        .word 0xF21D
+        .word 0xF21E
+        .word 0xF21F
+        .word 0xF240
+        .word 0xF25E
+
+SNK_CORP:
+		.word 0x719A                  
+        .byte 0x13
+        .byte 0x7F 
+aSnkCorp_ofAmerica1997:.ascii "SNK CORP.OF AMERICA 1997"
+        .byte 0xFF, 0xFF
