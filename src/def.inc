@@ -3,6 +3,7 @@ Backup_Size  = 0x100
 BIOS_SYSTEM_MODE = 0x10FD80
 BIOS_USER_REQUEST = 0x10FDAE
 BIOS_USER_MODE = 0x10FDAF
+BIOS_SELECT_TIMER = 0x10FDDA
 
 PAL_START = 0x2cfff0
 
@@ -24,6 +25,12 @@ OBJ_LIST_HEAD = 0x100100
 
 ScreenObj = 0x0
 ScreenObj.Flag = 0x90
+ScreenObj.pDataFromParam = 0xc2
+ScreenObj.VRamBaseOffset = 0xca
+ScreenObj.XfromParam = 0xd2
+ScreenObj.YfromParam = 0xd4
+ScreenObj.BackgroundSpriteWidthFromParam = 0xd6
+ScreenObj.BackgroundSpriteHeightFromParam = 0xd8
 
 Object = 0x0
 Object.PNext = 0x4

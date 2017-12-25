@@ -2,6 +2,7 @@
 .globl      ClearFixlay
 .globl		SetFixlayText
 .globl		SetFixlayTextEx
+.globl		FixlayOutputHexVal
 
 ClearFixlay:                                                                    
         lea     (REG_VRAMRW).l, a0        | REG_VRAMRW
@@ -100,3 +101,52 @@ _SetFixlayTextEx_End:
         addq.w  #1, A5Seg.TextOutputOffset(a5)
         rts
 | End of function SetFixlayTextEx
+
+
+| params:
+|     d1: hex val
+|     d2: addr in VRAM
+
+FixlayOutputHexVal:                                                           
+        move.w  d1, d0
+        andi.w  #0xF, d0
+        andi.w  #0xF0, d1
+        lsr.w   #4, d1
+        moveq   #0, d3
+        move.b  A5Seg.TextOutputDefaultPalIndex(a5), d3 | bit0~4: Pal index
+                                        | bit7: 0, use this index
+        bpl.s   loc_72E0
+        moveq   #0, d3
+
+loc_72E0:                               | CODE XREF: FixlayOutputHexVal+12j
+        andi.w  #0xF, d3
+        ror.w   #4, d3
+        addi.w  #0xF00, d3
+        swap    d2
+        move.w  d3, d2
+        lea     HexCharTable, a0
+        move.b  (a0,d1.w), d2           | high nible
+        move.l  d2, (REG_VRAMADDR).l
+        addi.l  #0x200000, d2
+        move.b  (a0,d0.w), d2           | low nible
+        move.l  d2, (REG_VRAMADDR).l
+        addi.l  #0x200000, d2
+        rts
+
+HexCharTable:
+		.byte 0x30               
+        .byte 0x31 | 1
+        .byte 0x32 | 2
+        .byte 0x33 | 3
+        .byte 0x34 | 4
+        .byte 0x35 | 5
+        .byte 0x36 | 6
+        .byte 0x37 | 7
+        .byte 0x38 | 8
+        .byte 0x39 | 9
+        .byte 0x41 | A
+        .byte 0x42 | B
+        .byte 0x43 | C
+        .byte 0x44 | D
+        .byte 0x45 | E
+        .byte 0x46 | F

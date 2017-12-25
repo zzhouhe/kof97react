@@ -12,9 +12,26 @@
 		bsr.w   InitTilesSprites
 		jsr     DisplaySubTitle
 
+
+        move.w  #6, d0
+        jsr     SET_SOUND               | params:
+                                        |     d0: sound index
+        move.w  #0x3A, d0
+        jsr     SET_SOUND               | params:
+                                        |     d0: sound index
+
 		move.l  #_GameTitle_step2, Object(a4)
 
-_GameTitle_step2:                               | DATA XREF: GameTitle+ECo
+_GameTitle_step2:   
+        lea     (TITLE_TIME).l, a0
+        jsr     SetFixlayText       
+        moveq   #0, d1
+        move.b  (BIOS_SELECT_TIMER).l, d1     | BIOS_SELECT_TIMER
+        st      A5Seg.TextOutputDefaultPalIndex(a5) | bit0~4: Pal index
+                                        | bit7: 0, use this index
+        jsr     FixlayOutputHexVal      | params:
+                                        |     d1: hex val
+                                        |     d2: addr in VRAM
 		rts
 
 InitTilesSprites:                      
@@ -135,5 +152,13 @@ SNK_CORP:
 		.word 0x719A                  
         .byte 0x13
         .byte 0x7F 
-aSnkCorp_ofAmerica1997:.ascii "SNK CORP.OF AMERICA 1997"
+aSnkCorp_ofAmerica1997:
+		.ascii "SNK CORP.OF AMERICA 1997"
         .byte 0xFF, 0xFF
+
+TITLE_TIME:
+		.word 0x723C                 
+        .byte  0xF
+		.ascii "TIME "
+        .byte 0xFF
+        .byte 0xFF

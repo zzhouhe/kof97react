@@ -1,12 +1,12 @@
 # kof97react
 
-This project is to rebuild the source code for the neogeo game "The King of Fighters '97" by M68K assembly.
+This project is to rebuild the source code for the SNK NeoGeo game "The King of Fighters '97" by M68K assembly.
 It is based on the reverse analysing on the original rom file.
-Currently, this will only rebuild the P1-rom part of the game (size: 1M bytes). 
+Currently, this will only rebuild the P1-rom part of the game (cartridge, MVS system, P1-rom size: 1M bytes). 
 
 ## Compiler tools 
 Use gcc tools to complie the source code.
-For windows, you can download the tools here:
+For Windows system, you can download the tools here:
 https://wiki.neogeodev.org/index.php?title=File:NeoDev001.zip
 
 ## Debugger tools

@@ -162,9 +162,8 @@ REQUEST_TABLE:.long INIT_CASSETTE       | On the MVS, this command is called onl
 
 INIT_CASSETTE:
 EYE_CATCHER:
-DEMO:
 		rts
-
+DEMO:
 _start:
 UserTitleRoutine:	|0x248
 		bclr    #7, (BIOS_SYSTEM_MODE).l

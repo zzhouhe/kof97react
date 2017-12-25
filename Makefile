@@ -30,7 +30,7 @@ PADBYTE = 0xff
 ##############################
 
 OBJS = $(TMPDIR)/main.o $(TMPDIR)/Palette.o $(TMPDIR)/Sound.o $(TMPDIR)/FixLay.o \
-		$(TMPDIR)/Sprites.o $(TMPDIR)/Object.o $(TMPDIR)/Title.o
+		$(TMPDIR)/Sprites.o $(TMPDIR)/Object.o $(TMPDIR)/Title.o $(TMPDIR)/Backgroud.o \
 
 #####################
 # Compilation Flags #
