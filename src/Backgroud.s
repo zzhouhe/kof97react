@@ -1,5 +1,8 @@
 .include	"def.inc"
 .globl		InitBackGroundLayer2
+.globl		InitBackGroundLayer3
+.globl		InitBackGroundLayer4
+.globl		InitBackGroundLayer5
 
 InitLayerEnd:                           
         move.l  a2, ScreenObj.pDataFromParam(a1)
@@ -12,12 +15,12 @@ InitLayerEnd:
 | params:
 |     d1: X
 |     d2: Y
-|     d3: width
-|     d4: height
+|     d3: width - 1
+|     d4: height - 1
 InitBackGroundLayer2:                  
         moveq   #2, d0
         movem.l d1-d5/a2, -(sp)
-        |lea     BackGroundLayerRoutine, a0
+        lea     BackGroundLayerRoutine, a0
         jsr     (InitBackGroundLayer).l | params:
                                         |     d0: back layer index
                                         |     a0: proc routine
@@ -27,6 +30,41 @@ InitBackGroundLayer2:
 | End of function InitBackGroundLayer2
 
 
+InitBackGroundLayer3:                   
+        moveq   #3, d0
+        movem.l d1-d5/a2, -(sp)
+        lea     BackGroundLayerRoutine, a0
+        jsr     (InitBackGroundLayer).l | params:
+                                        |     d0: back layer index
+                                        |     a0: proc routine
+        movem.l (sp)+, d1-d5/a2
+        move.w  #0xA40, ScreenObj.VRamBaseOffset(a1) | 0x29 * 0x40
+        bra.s   InitLayerEnd
+| End of function InitBackGroundLayer3
+
+InitBackGroundLayer4:                  
+        moveq   #4, d0
+        movem.l d1-d5/a2, -(sp)
+        lea     BackGroundLayerRoutine, a0
+        jsr     (InitBackGroundLayer).l | params:
+                                        |     d0: back layer index
+                                        |     a0: proc routine
+        movem.l (sp)+, d1-d5/a2
+        move.w  #0x540, ScreenObj.VRamBaseOffset(a1) | 0x15 *0x40
+        bra.s   InitLayerEnd
+| End of function InitBackGroundLayer4
+
+InitBackGroundLayer5:                   
+        moveq   #5, d0
+        movem.l d1-d5/a2, -(sp)
+        lea     BackGroundLayerRoutine, a0
+        jsr     (InitBackGroundLayer).l | params:
+                                        |     d0: back layer index
+                                        |     a0: proc routine
+        movem.l (sp)+, d1-d5/a2
+        move.w  #0x40, ScreenObj.VRamBaseOffset(a1)
+        bra.w   InitLayerEnd
+| End of function InitBackGroundLayer5
 
 | params:
 |     d0: back layer index
@@ -187,8 +225,42 @@ _LoadShrinkFromScreenObj_loopNear:
 
 | params:
 |     a4: screen obj
+|     d0: VRAM addr
+|     d2: height - 1
+|     d4: width - 1
 
-LoadSCB3_4fromScreenObj:                                                        
+LoadBckgrdSCB1data:                     
+                                        
+        lea     (0x3C0002).l, a1        | REG_VRAMRW
+        movea.l ScreenObj.pBackgroundSCB1Data(a4), a0
+|        move.w  ScreenObj.Player2TilePaletteDelta(a4), d3 | player1: $00
+                                        | player2: $20
+                                        | 对应 A5Seg.GlobalTilePalette的Palette偏移量
+|        clr.b   d3
+        move.w  #1, 2(a1)
+
+_LoadBckgrdSCB1data_loopOut:                              
+        move.w  d2, d5
+        move.w  d0, -2(a1)
+
+_LoadBckgrdSCB1data_loopIn:                               
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, d1
+|        add.w   d3, d1
+        move.w  d1, (a1)
+        nop
+        dbf     d5, _LoadBckgrdSCB1data_loopIn
+        addi.w  #0x40, d0
+        dbf     d4, _LoadBckgrdSCB1data_loopOut
+        rts
+| End of function LoadBckgrdSCB1data
+
+
+
+| params:
+|     a4: screen obj
+
+LoadSCB3_4fromScreenObj:         |0x2004                                               
         addq.b  #1, A5Seg.BackgroundUpdateSCB3_4NumBlocksPending(a5)
         lea     A5Seg.BackgroundSpritesXTempBuf(a5), a1
         move.w  ScreenObj.X(a4), d0     | layer's X, neg mean right, in pixels
@@ -214,7 +286,7 @@ LoadSCB3_4fromScreenObj:
         move.w  d0, d3
         subq.w  #1, d3
 
-_LoadSCB3_4fromScreenObj_loopForSprites_X:                        
+_LoadSCB3_4fromScreenObj_loopForSprites_X:                  
         move.w  d1, (a0)+				| d1: X << 7, a0: block start
         addi.w  #0x800, d1              | 0x10 << 7
         move.w  d1, 2(a1)
@@ -230,8 +302,9 @@ _LoadSCB3_4fromScreenObj_loopForSprites_X:
 _LoadSCB3_4fromScreenObj_addLoop:                               
         add.w   d7, (a1)+
         dbf     d3, _LoadSCB3_4fromScreenObj_addLoop
-|---------------for Y-----------
-        move.w  ScreenObj.SCB3UpdateVramAddr(a4), (a0)+
+
+|---------------for Y-----------	 |0x2062     
+        move.w  ScreenObj.SCB3UpdateVramAddr(a4), (a0)+	
         move.w  d0, (a0)+
         move.w  d0, d7
         move.w  ScreenObj.Y(a4), d0				| layer's Y, neg mean down, in pixels
@@ -309,4 +382,103 @@ loc_7C66:                               | CODE XREF: LoadSCB3_4fromScreenObj+1C0
 loc_7C6C:                               | CODE XREF: LoadSCB3_4fromScreenObj+1C8j
         move.l  a0, A5Seg.pBackgroundUpdateSCB3_4BlocksStart(a5)
         rts
-| --------------------------------------			
+| End of function LoadSCB3_4fromScreenObj		
+
+
+
+| params:
+|     d0: addr
+|     d1: width - 1
+|     d2: height - 1
+
+ZeroSCB1Sprites:                       
+                                       
+        swap    d0
+        lea     (0x3C0000).l, a0        | REG_VRAMADDR
+
+_ZeroSCB1Sprites_loopOut:                              
+        move.w  d2, d3
+
+_ZeroSCB1Sprites_loopIn:                               
+        move.w  #0, d0
+        move.l  d0, (a0)
+        addi.l  #0x10000, d0
+        move.w  #0, d0
+        move.l  d0, (a0)
+        addi.l  #0x10000, d0
+        dbf     d3, _ZeroSCB1Sprites_loopIn
+        dbf     d1, _ZeroSCB1Sprites_loopOut
+        rts
+| End of function ZeroSCB1Sprites
+
+
+BackGroundLayerRoutine:  |0x2110                                                     
+        move.w  ScreenObj.VRamBaseOffset(a4), d0
+        moveq   #0x14, d1
+|        lea     (word_A8C96).l, a0
+        jsr     (InitLayerObj).l        | params:
+                                        |     a0: prt to: widthInTiles, HeightInTiles
+                                        |     d0: VRAM base offset
+                                        |     d1: MaxNumTiles to use
+        move.w  ScreenObj.BackgroundSpriteHeightFromParam(a4), ScreenObj.BackgroundSpriteHeight(a4)
+        addi.w  #1, ScreenObj.BackgroundSpriteHeight(a4)
+        move.w  ScreenObj.XfromParam(a4), ScreenObj.X(a4) | layer's X, neg mean right, in pixels
+        move.w  ScreenObj.YfromParam(a4), ScreenObj.Y(a4) | layer's Y, neg mean down, in pixels
+        move.w  ScreenObj.VRamBaseOffsetInSCB1(a4), d0
+        moveq   #0x13, d1
+        moveq   #0x1F, d2
+        jsr     ZeroSCB1Sprites         | params:
+                                        |     d0: addr
+                                        |     d1: width - 1
+                                        |     d2: height - 1
+        move.l  #_BackGroundLayerRoutine_step2, ScreenObj(a4)  | 主例程
+
+_BackGroundLayerRoutine_step2:                                 
+        move.w  ScreenObj.VRamBaseOffsetInSCB1(a4), d0
+        move.l  ScreenObj.pDataFromParam(a4), ScreenObj.pBackgroundSCB1Data(a4)
+        move.w  ScreenObj.BackgroundSpriteWidthFromParam(a4), d4 | width - 1
+        move.w  ScreenObj.BackgroundSpriteHeightFromParam(a4), d2 | height - 1
+|        tst.b   ScreenObj.IsFaceToRight(a4) | bit0: Horizontal flip
+                                        | bit1: Vertical flip
+                                        | bit2: 2bit Auto-anim
+                                        | bit3: 3bit Auto-anim
+                                        | 实际上是SCB1 tile 第二word 的低字节属性
+|        bne.s   _BackGroundLayerRoutine_flip
+        jsr     LoadBckgrdSCB1data      | params:
+                                        |     a4: screen obj
+                                        |     d0: VRAM addr
+                                        |     d2: height - 1
+                                        |     d4: width - 1
+        move.l  #_BackGroundLayerRoutine_step3, (a4)
+
+_BackGroundLayerRoutine_step3:         
+|        bclr    #1, A5Seg.layerShowFlag(a5) | bit1: 1, not show this layer
+|        beq.s   _BackGroundLayerRoutine_step4
+|        ori.b   #1, ScreenObj.Flag(a4)  | bit0: 1, do not show this layer
+|                                        | bit1: 1, do not scroll X
+|                                        | bit2: 1, do not scrool Y
+|                                        | bit5: 1, do not ... ?
+|                                        | bit6: 1, sticky
+|                                        | bit7: 0, do not use layer proc
+|        move.l  #loc_E646, ScreenObj(a4) | 主例程
+|        bra.s   _BackGroundLayerRoutine_step4
+| ---------------------------------------------------------------------------
+
+|loc_E646:                               | DATA XREF: BackGroundLayerRoutine+70o
+|        andi.b  #0x7F, ScreenObj.Flag(a4) | bit0: 1, do not show this layer
+|                                        | bit1: 1, do not scroll X
+|                                        | bit2: 1, do not scrool Y
+|                                        | bit5: 1, do not ... ?
+|                                        | bit6: 1, sticky
+|                                        | bit7: 0, do not use layer proc
+|        move.l  #_BackGroundLayerRoutine_step4, ScreenObj(a4)  | 主例程
+
+_BackGroundLayerRoutine_step4:                                 | CODE XREF: BackGroundLayerRoutine+68j
+                                        | BackGroundLayerRoutine+76j
+                                        | DATA XREF: ...
+        jsr     (LoadShrinkFromScreenObj).l | params:
+                                        |     a4: screen obj
+        jsr     (LoadSCB3_4fromScreenObj).l | params:
+                                        |     a4: screen obj
+        rts
+

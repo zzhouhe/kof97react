@@ -426,7 +426,7 @@ SetBackgroundNoUse:
 | End of function SetBackgroundNoUse
 
 
-GameLogicMainLoopEntry:           |0x5b4      
+GameLogicMainLoopEntry:           |0x5cc      
 _MainLoopStart:                         
         move.b  #0, A5Seg.VBlankSpinEvent(a5) 
         andi.b  #0x7F, A5Seg.TileUpdateFlag(a5) | bit0: 1, vert pos need update for buf_main

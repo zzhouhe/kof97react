@@ -36,6 +36,7 @@ ScreenObj.SCB2UpdateVramAddr = 0x76
 ScreenObj.MaxNumOfSpritesToUse = 0x78
 ScreenObj.WidthInTiles = 0x7a
 ScreenObj.HeightInTiles = 0x7c
+ScreenObj.pBackgroundSCB1Data = 0x84
 ScreenObj.RightPixelsX = 0x88
 ScreenObj.LeftPixelsX = 0x8a
 ScreenObj.TopPixelsY = 0x8c
