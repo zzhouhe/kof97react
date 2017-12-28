@@ -1,6 +1,7 @@
-.include "def.inc"
+.include	"def.inc"
 .globl      UpdateSCB3
-
+.globl      UpdateSCB2
+.globl		UpdateBackgroundSCB3_4
 
 UpdateSCB3:                             
         move.w  #1, (0x3C0004).l        | REG_VRAMMOD
@@ -405,3 +406,164 @@ _ZeroVertPositionsToSCB3Ebd_repeatWrite:
         move.w  d0, 2(a1)
         rts
 | End of function ZeroVertPositionsToSCB3Ebd
+
+
+| updeate shirnk vals
+| 按块更新, 每块最多包含32个entry
+
+UpdateSCB2:                             
+        move.l  #0x10BCFE, A5Seg.ShrinkUpdateBlocksStart(a5)
+        tst.b   A5Seg.ShrinkNumBlocksToUpdate(a5)
+        bne.s   _UpdateSCB2_update
+        rts
+| ---------------------------------------------------------------------------
+
+_UpdateSCB2_update:                                
+        lea     A5Seg.UpdateOffsetInSCB2(a5), a0 | Shrink update index
+        move.w  #1, (REG_VRAMMOD).l        
+
+_UpdateSCB2_loop:                          
+        lea     (REG_VRAMADDR).l, a1       
+        move.w  (a0)+, (a1)+
+        moveq   #0x20, d0
+        sub.w   (a0)+, d0
+        add.w   d0, d0
+        jmp     loc_A8FC(pc,d0.w)
+| ---------------------------------------------------------------------------
+
+loc_A8FC:
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        subq.b  #1, A5Seg.ShrinkNumBlocksToUpdate(a5)
+        bne.w   _UpdateSCB2_loop
+        rts
+| End of function UpdateSCB2
+
+
+UpdateBackgroundSCB3_4:                 
+        move.l  #0x10B8BE, A5Seg.pBackgroundUpdateSCB3_4BlocksStart(a5)
+        tst.b   A5Seg.BackgroundUpdateSCB3_4NumBlocksPending(a5)
+        bne.s   _UpdateBackgroundSCB3_4_update
+        rts
+| ---------------------------------------------------------------------------
+
+_UpdateBackgroundSCB3_4_update:                               
+        lea     A5Seg.BackgroundSCB3_4BlocksBuf(a5), a0
+        move.w  #1, (REG_VRAMMOD).l       
+
+_UpdateBackgroundSCB3_4_blocksLoop:                           
+        lea     (REG_VRAMADDR).l, a1       
+        move.w  (a0)+, (a1)+
+        move.w  #0x20, d0
+        sub.w   (a0)+, d0
+        add.w   d0, d0
+        jmp     _UpdateBackgroundSCB3_4_SCB4(pc,d0.w)
+| ---------------------------------------------------------------------------
+
+_UpdateBackgroundSCB3_4_SCB4:
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        moveq   #0x20, d0               | second block
+        move.w  (a0)+, -2(a1)
+        sub.w   (a0)+, d0
+        add.w   d0, d0
+        jmp     _UpdateBackgroundSCB3_4_SCB3(pc,d0.w)
+| ---------------------------------------------------------------------------
+
+_UpdateBackgroundSCB3_4_SCB3:
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        move.w  (a0)+, (a1)
+        subq.b  #1, A5Seg.BackgroundUpdateSCB3_4NumBlocksPending(a5)
+        bne.w   _UpdateBackgroundSCB3_4_blocksLoop             | REG_VRAMADDR
+        rts
+| End of function UpdateBackgroundSCB3_4

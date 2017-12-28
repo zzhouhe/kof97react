@@ -1,4 +1,4 @@
-.include "def.inc"
+.include	"def.inc"
 .globl		InitBackGroundLayer2
 
 InitLayerEnd:                           
@@ -14,7 +14,6 @@ InitLayerEnd:
 |     d2: Y
 |     d3: width
 |     d4: height
-
 InitBackGroundLayer2:                  
         moveq   #2, d0
         movem.l d1-d5/a2, -(sp)
@@ -32,7 +31,6 @@ InitBackGroundLayer2:
 | params:
 |     d0: back layer index
 |     a0: proc routine
-
 InitBackGroundLayer:                   
         lea     A5Seg.BackGroundObjLayer0(a5), a1 | 最顶层背景Obj
         move.w  d0, -(sp)
@@ -58,3 +56,257 @@ _InitBackGroundLayer_dbfloop:
         rts
 | End of function InitBackGroundLayer
 
+
+| params:
+|     a0: prt to: widthInTiles, HeightInTiles
+|     d0: VRAM base offset
+|     d1: MaxNumTiles to use
+
+InitLayerObj:                           
+                                        
+        move.w  d0, ScreenObj.VRamBaseOffsetInSCB1(a4)
+        move.w  d1, ScreenObj.MaxNumOfSpritesToUse(a4)
+        lsr.w   #6, d0
+        move.w  d0, d1
+        addi.w  #-0x8000, d0
+        move.w  d0, ScreenObj.SCB2UpdateVramAddr(a4)
+        addi.w  #0x200, d0
+        move.w  d0, ScreenObj.SCB3UpdateVramAddr(a4)
+        addi.w  #0x200, d0
+        move.w  d0, ScreenObj.SCB4UpdateVramAddr(a4)
+        |move.w  (a0)+, ScreenObj.WidthInTiles(a4) | 图层宽度包含多少个tile
+        |move.w  (a0)+, ScreenObj.HeightInTiles(a4) | always $10
+        |moveq   #0, d0
+        |move.w  (a0)+, d0
+        |lsl.w   #4, d0
+        |move.w  d0, ScreenObj.X(a4)     | layer's X, neg mean right, in pixels
+        |subi.w  #0x10, d0
+        |move.w  d0, ScreenObj.LeftPixelsX(a4)
+        |addi.w  #0x160, d0
+        |move.w  d0, ScreenObj.RightPixelsX(a4)
+        |moveq   #0, d0
+        |move.w  (a0)+, d0
+        |lsl.w   #4, d0
+        |move.w  d0, ScreenObj.Y(a4)     | layer's Y, neg mean down, in pixels
+        |subi.w  #0x10, d0
+        |move.w  d0, ScreenObj.TopPixelsY(a4) | 更新时使用, 16像素对齐
+        |clr.l   ScreenObj.YFromGround(a4) | 屏幕的向上滚动偏移
+        |addi.w  #0x120, d0
+        |move.w  d0, ScreenObj.BottomPixelsY(a4)
+        |move.l  a0, ScreenObj.pBackgroundSCB1Data(a4) | p1 rom 中保存的SCB1 静态 rom 数据
+        |move.w  #0x20, ScreenObj.BackgroundSpriteHeight(a4)
+        move.w  #0xFFFF, ScreenObj.ShrinkRate(a4) | 人物整体比例
+        |clr.l   ScreenObj.VertSpriteDeltaYBuf(a4)
+        |clr.l   ScreenObj.VertSpriteDeltaYBuf+4(a4)
+        |clr.l   ScreenObj.VertSpriteDeltaYBuf+8(a4)
+        |clr.l   ScreenObj.VertSpriteDeltaYBuf+0xC(a4)
+        |clr.l   ScreenObj.VertSpriteDeltaYBuf+0x10(a4)
+        |clr.l   ScreenObj.field_F4(a4)
+        |clr.l   ScreenObj.field_F8(a4)
+        |clr.l   ScreenObj.field_FC(a4)
+        clr.w   A5Seg.GlobalCamaraYDelta(a5) | 全局镜头的Y偏移
+        rts
+| End of function InitLayerObj
+
+
+| params:
+|     a4: screen obj
+
+LoadShrinkFromScreenObj:                                                      
+        move.w  ScreenObj.ShrinkRate(a4), d0
+        cmp.w   ScreenObj.LastShrink(a4), d0
+        bne.s   _LoadShrinkFromScreenObj_update
+        rts
+| ---------------------------------------------------------------------------
+_LoadShrinkFromScreenObj_update:                                
+        move.w  d0, ScreenObj.LastShrink(a4)
+        addq.b  #1, A5Seg.ShrinkNumBlocksToUpdate(a5)
+        movea.l A5Seg.ShrinkUpdateBlocksStart(a5), a0
+        move.w  ScreenObj.SCB2UpdateVramAddr(a4), (a0)+
+        move.w  ScreenObj.MaxNumOfSpritesToUse(a4), d0
+        move.w  d0, (a0)+
+        subq.w  #1, d0
+|        lea     (g_HoriShrinkRefineTable).l, a1
+|        cmpi.w  #0xFFFF, ScreenObj.ShrinkRate(a4)
+|        beq.s   loc_8000
+|        moveq   #0, d1
+|        moveq   #0, d2
+|        move.b  ScreenObj.ShrinkRate+1(a4), d1
+|        move.b  ScreenObj.ShrinkRate(a4), d2
+|        move.w  d2, d3
+|        andi.w  #0xF, d3
+|        neg.w   d3
+|        addi.w  #0xF, d3
+|        lsl.w   #5, d3
+|        adda.w  d3, a1
+|        lsr.w   #4, d2
+|        moveq   #0, d4
+|
+|_LoadShrinkFromScreenObj_loop:                                 
+|        move.w  d2, d3
+|        sub.b   (a1)+, d3
+|        bpl.s   loc_7FE2
+|        clr.w   d3
+|        move.b  d3, ScreenObj.field_40(a4,d4.w)
+|        addq.w  #1, d4
+|        andi.w  #0xF, d4
+|        bra.s   loc_7FF2
+|| ---------------------------------------------------------------------------
+|
+|loc_7FE2:                              
+|        move.b  d3, -(sp)
+|        move.b  d3, ScreenObj.field_40(a4,d4.w)
+|        addq.w  #1, d4
+|        andi.w  #0xF, d4
+|        move.w  (sp)+, d3
+|        clr.b   d3
+|
+|loc_7FF2:                              
+|        or.w    d1, d3
+|        move.w  d3, (a0)+
+|        dbf     d0, _LoadShrinkFromScreenObj_loop
+|        move.l  a0, A5Seg.ShrinkUpdateBlocksStart(a5)
+|        rts
+|| ---------------------------------------------------------------------------
+|
+loc_8000:                               
+        move.w  #0xFFF, d3
+
+_LoadShrinkFromScreenObj_loopNear:                             
+        move.w  d3, (a0)+
+        dbf     d0, _LoadShrinkFromScreenObj_loopNear
+|        move.l  #0xF0F0F0F, ScreenObj.field_40(a4)
+|        move.l  #0xF0F0F0F, ScreenObj.XDeltaThisFrame(a4) 
+|        move.l  #0xF0F0F0F, ScreenObj.field_48(a4)
+|        move.l  #0xF0F0F0F, ScreenObj.field_4C(a4)
+|        move.l  a0, A5Seg.ShrinkUpdateBlocksStart(a5)
+        rts
+| End of function LoadShrinkFromScreenObj
+
+
+
+| params:
+|     a4: screen obj
+
+LoadSCB3_4fromScreenObj:                                                        
+        addq.b  #1, A5Seg.BackgroundUpdateSCB3_4NumBlocksPending(a5)
+        lea     A5Seg.BackgroundSpritesXTempBuf(a5), a1
+        move.w  ScreenObj.X(a4), d0     | layer's X, neg mean right, in pixels
+        neg.w   d0
+        move.w  d0, 0x42(a1)            | 0x42 = (0x20 + 1) * 2
+                                        | max sprites use 0x20
+        move.w  d0, d1
+        lsl.w   #7, d1                  | * 128
+        move.w  d1, (a1)
+        moveq   #0, d7
+|        cmpi.b  #0xFF, ScreenObj.ShrinkRate(a4)
+
+|        add.w   ScreenObj.SpecialRightX(a4), d7 
+        lsl.w   #7, d7
+        lsl.w   #7, d0                  | X position in SCB4
+        move.w  d0, d1
+        movea.l A5Seg.pBackgroundUpdateSCB3_4BlocksStart(a5), a0 
+        move.w  ScreenObj.SCB4UpdateVramAddr(a4), (a0)+
+        move.w  ScreenObj.MaxNumOfSpritesToUse(a4), d0
+        move.w  d0, (a0)+
+        lea     (a0), a6
+        move.l  a0, -(sp)               | push
+        move.w  d0, d3
+        subq.w  #1, d3
+
+_LoadSCB3_4fromScreenObj_loopForSprites_X:                        
+        move.w  d1, (a0)+				| d1: X << 7, a0: block start
+        addi.w  #0x800, d1              | 0x10 << 7
+        move.w  d1, 2(a1)
+        move.w  0x42(a1), 0x44(a1)
+        addi.w  #0x10, 0x44(a1)
+        addq.l  #2, a1
+        dbf     d3, _LoadSCB3_4fromScreenObj_loopForSprites_X
+
+        move.w  d0, d3
+        subq.w  #1, d3
+        movea.l (sp)+, a1
+
+_LoadSCB3_4fromScreenObj_addLoop:                               
+        add.w   d7, (a1)+
+        dbf     d3, _LoadSCB3_4fromScreenObj_addLoop
+|---------------for Y-----------
+        move.w  ScreenObj.SCB3UpdateVramAddr(a4), (a0)+
+        move.w  d0, (a0)+
+        move.w  d0, d7
+        move.w  ScreenObj.Y(a4), d0				| layer's Y, neg mean down, in pixels
+        sub.w   ScreenObj.YFromGround(a4), d0	| 屏幕camara的向上滚动偏移
+        move.b  ScreenObj.ShrinkRate+1(a4), d1
+        lsl.w   #8, d1
+|        cmpi.w  #0xFF00, d1
+
+		add.w   A5Seg.GlobalCamaraYDelta(a5), d0 | 全局镜头的Y偏移, 如地震效果等, neg 表示镜头上移
+        subi.w  #0x10, d0				| 上方0x10像素不显示区
+        lsl.w   #7, d0
+        move.w  d0, d1
+        move.w  d7, d0	
+        lea     A5Seg.BackgroundSpritesXTempBuf(a5), a1
+        moveq   #0, d4
+        tst.b   A5Seg.VideoSpecialModes(a5) | bit0: 1, not show back obj
+                                        | bit1: 1, 显示分数排名
+                                        | bit2: 1, demo mod
+                                        | bit3: 1, not show coin and difficulty
+                                        | bit4: 1, role fast speed
+                                        | bit6: 1, 3倍慢速
+                                        | bit7: 1, not show background
+        bmi.s   _LoadSCB3_4fromScreenObj_testXoverflow
+        btst    #0, ScreenObj.Flag(a4)  | bit0: 1, do not show this layer
+                                        | bit1: 1, do not scroll X
+                                        | bit2: 1, do not scrool Y
+                                        | bit5: 1, do not ... ?
+                                        | bit6: 1, sticky
+                                        | bit7: 0, do not use layer proc
+        bne.s   _LoadSCB3_4fromScreenObj_testXoverflow
+        move.w  ScreenObj.BackgroundSpriteHeight(a4), d4
+        or.w    d1, d4                  | d1: Y << 7
+
+_LoadSCB3_4fromScreenObj_testXoverflow:                        
+                                        | LoadSCB3_4fromScreenObj+18Aj
+        move.w  (a1)+, d2               | X << 7
+        addi.w  #0x780, d2              | F << 7
+        cmpi.w  #0xA600, d2             | 14c << 7
+        bhi.s   _LoadSCB3_4fromScreenObj_write_size0
+        move.w  d4, (a0)+
+        bra.s   loc_7C40
+| ---------------------------------------------------------------------------
+_LoadSCB3_4fromScreenObj_write_size0:                           
+        move.w  d1, (a0)+               | write it to SCB3, but with size = 0
+
+loc_7C40:                               | CODE XREF: LoadSCB3_4fromScreenObj+1A0j
+        subq.w  #2, d0
+        swap    d2
+        move.b  ScreenObj.Flag(a4), d2  | bit0: 1, do not show this layer
+                                        | bit1: 1, do not scroll X
+                                        | bit2: 1, do not scrool Y
+                                        | bit5: 1, do not ... ?
+                                        | bit6: 1, sticky
+                                        | bit7: 0, do not use layer proc
+        andi.w  #0x40, d2
+        or.w    d2, d1
+        or.w    d2, d4
+        swap    d2
+
+_LoadSCB3_4fromScreenObj_loopWriteY:                            | CODE XREF: LoadSCB3_4fromScreenObj+1C4j
+                                        | LoadSCB3_4fromScreenObj+1CCj
+        move.w  (a1)+, d2
+        addi.w  #0x780, d2
+        cmpi.w  #0xA600, d2
+        bhi.s   loc_7C66
+        move.w  d4, (a0)+
+        dbf     d0, _LoadSCB3_4fromScreenObj_loopWriteY
+        bra.s   loc_7C6C
+| ---------------------------------------------------------------------------
+
+loc_7C66:                               | CODE XREF: LoadSCB3_4fromScreenObj+1C0j
+        move.w  d1, (a0)+
+        dbf     d0, _LoadSCB3_4fromScreenObj_loopWriteY
+
+loc_7C6C:                               | CODE XREF: LoadSCB3_4fromScreenObj+1C8j
+        move.l  a0, A5Seg.pBackgroundUpdateSCB3_4BlocksStart(a5)
+        rts
+| --------------------------------------			

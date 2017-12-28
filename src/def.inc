@@ -24,7 +24,24 @@ A5Seg.VBlankCounter = -0x7f68
 OBJ_LIST_HEAD = 0x100100
 
 ScreenObj = 0x0
+ScreenObj.X = 0x18
+ScreenObj.Y = 0x1c 
+ScreenObj.YFromGround = 0x20
+ScreenObj.ShrinkRate = 0x2e
+ScreenObj.BackgroundSpriteHeight = 0x60
+ScreenObj.VRamBaseOffsetInSCB1 = 0x70
+ScreenObj.SCB4UpdateVramAddr = 0x72
+ScreenObj.SCB3UpdateVramAddr = 0x74
+ScreenObj.SCB2UpdateVramAddr = 0x76
+ScreenObj.MaxNumOfSpritesToUse = 0x78
+ScreenObj.WidthInTiles = 0x7a
+ScreenObj.HeightInTiles = 0x7c
+ScreenObj.RightPixelsX = 0x88
+ScreenObj.LeftPixelsX = 0x8a
+ScreenObj.TopPixelsY = 0x8c
+ScreenObj.BottomPixelsY = 0x8e
 ScreenObj.Flag = 0x90
+ScreenObj.LastShrink = 0xa0
 ScreenObj.pDataFromParam = 0xc2
 ScreenObj.VRamBaseOffset = 0xca
 ScreenObj.XfromParam = 0xd2
@@ -42,6 +59,7 @@ A5Seg.MainNextRoutine = 0x500
 A5Seg.SpritePoolBaseTable = 0x2700
 A5Seg.ObjPoolStackIndex = 0x2780
 A5Seg.VBlankSpinEvent = 0x2785
+A5Seg.VideoSpecialModes = 0x2788
 A5Seg.TileUpdateFlag = 0x2789
 |A5Seg.PaletteUpdateFlag = 0x278a
 A5Seg.IsPlayerExist = 0x27f2
@@ -62,6 +80,13 @@ A5Seg.BackGroundObjLayer5 = 0x35b2
 A5Seg.BackGroundObjLayer6 = 0x36b2
 A5Seg.BackGroundObjLayer7 = 0x37b2
 A5Seg.PendingNumOfBackgroundLayerToUpdate = 0x38b2
+A5Seg.ShrinkNumBlocksToUpdate = 0x38b5
+A5Seg.BackgroundUpdateSCB3_4NumBlocksPending = 0x38b4
+A5Seg.pBackgroundUpdateSCB3_4BlocksStart = 0x38b6
+A5Seg.BackgroundSCB3_4BlocksBuf = 0x38be
+
+A5Seg.ShrinkUpdateBlocksStart = 0x38ba
+A5Seg.UpdateOffsetInSCB2 = 0x3cfe | 0x10bcfe
 
 PaletteTempQueueStart = 0x108000 + 0x4022	|0x10c022
 A5Seg.PaletteTempQueueStart = 0x4022
@@ -77,7 +102,9 @@ A5Seg.pGhostBuf = 0x64d6
 A5Seg.TextOutputOffset = 0x64f6
 A5Seg.TextOutputEntryHigh = 0x64f8
 A5Seg.TextOutputDefaultPalIndex = 0x64fa
+A5Seg.BackgroundSpritesXTempBuf = 0x6506
 A5Seg.PaletteSubGroupIndex = 0x66be
+A5Seg.GlobalCamaraYDelta = 0x6ce4
 
 
 
