@@ -381,7 +381,7 @@ _ZeroUserWorkRAM_dbfLoop:
         dbf     d0, _ZeroUserWorkRAM_dbfLoop
         rts
 
-InitScreenAndObjectPool:            
+InitScreenAndObjectPool:           |568 
         move.b  #1, A5Seg.VBlankSpinEvent(a5) | 0: cpu tell the veo-sys need to update one frame
                                               | 1: veo-sys tell cpu that update done
         jsr     ClearFixlay

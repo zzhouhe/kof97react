@@ -1,10 +1,11 @@
 .include "def.inc"
-.globl      InitObjectPool 
+.globl      InitObjectPool
+.globl		AllocateObjBlock
+.globl		FreeObjBlock 
 .globl		ZeroObjZbuf
 .globl		CallObjRoutine
 
-
-InitObjectPool:                         
+InitObjectPool:          |1f24               
                                         
         lea     (OBJ_LIST_HEAD).l, a0
         move.l  #EmptyRoutine, Object(a0) 
@@ -16,9 +17,9 @@ InitObjectPool:
         move.w  #0xFFFF, Object.PNext+0x200(a0)
         move.l  #OBJ_LIST_HEAD, d0
         move.w  d0, Object.PPrev+0x200(a0)
-        |move.w  #0xFFFF, Object.Level+0x200(a0)
+        move.w  #0xFFFF, Object.Level+0x200(a0)
         lea     A5Seg.SpritePoolBaseTable(a5), a0
-        move.l  0x107F00, d0
+        move.l  #0x107F00, d0
         move.w  #0x3D, d1               | loop time 3e
 
 _obj_dbfLoop:                               | CODE XREF: InitObjectPool+4Ej
@@ -35,6 +36,78 @@ _obj_dbfLoop:                               | CODE XREF: InitObjectPool+4Ej
 
 EmptyRoutine:
 		rts
+
+AllocateObjBlock:                       |1f82
+        move.w  A5Seg.ObjPoolStackIndex(a5), d7
+        bmi.w   _AllocateObjBlock_overflow               | if (curIndex > 0x7F)
+                                        |     goto ...overflow
+        subq.w  #2, A5Seg.ObjPoolStackIndex(a5) | curIndex -= 2
+                                        | 注意此时 d7 没有变
+        lea     A5Seg.SpritePoolBaseTable(a5), a1 | 10a700
+        movea.w (a1,d7.w), a1
+        adda.l  #0x100000, a1
+        move.l  a0, Object(a1)
+        move.w  d0, Object.Level(a1)    | 数值越小, 处理程序越先被执行 (优先级越高).
+                                        | 也用于判断是否冻结画面
+        lea     -0x7F00(a5), a0         | 100100 链表头
+        move.l  a0, d7
+
+_AllocateObjBlock_findPosition:                          | CODE XREF: AllocateObjBlock+30j
+        move.w  Object.PNext(a0), d7
+        movea.l d7, a0                  | a0 = 100000 + *(a0+4)
+        cmp.w   Object.Level(a0), d0    | 数值越小, 处理程序越先被执行 (优先级越高).
+                                        | 也用于判断是否冻结画面
+        bcc.s   _AllocateObjBlock_findPosition           | if(8(a0)<=d0) goto
+        move.w  a0, Object.PNext(a1)    | 找到了一个 level 足够大的块
+                                        | 把原来的块按照level顺序插进链表
+        move.w  Object.PPrev(a0), Object.PPrev(a1)
+        move.w  Object.PPrev(a0), d7
+        move.w  a1, Object.PPrev(a0)
+        movea.l d7, a0
+        move.w  a1, Object.PNext(a0)
+        lea     Object.TagString(a1), a0
+        move.w  #0x1E, d0
+        moveq   #0, d7
+_AllocateObjBlock_zeroLoop:                              
+        move.l  d7, (a0)+
+        move.l  d7, (a0)+
+        move.l  d7, (a0)+
+        move.l  d7, (a0)+
+        dbf     d0, _AllocateObjBlock_zeroLoop           | 清零 0x1f0
+        rts
+| ---------------------------------------------------------------------------
+
+_AllocateObjBlock_overflow:                              
+        lea     (TASK_OVER).l, a0       | task over
+        jsr     SetFixlayText           | params:
+                                        |     a0: ptr to fixlay output struct
+
+_AllocateObjBlock_deathLoop:                           
+        bra.w   _AllocateObjBlock_deathLoop
+| End of function AllocateObjBlock
+
+
+| params:
+|     a4: Obj
+
+FreeObjBlock:                          
+                                       
+        lea     A5Seg.SpritePoolBaseTable(a5), a0
+        addq.w  #2, A5Seg.ObjPoolStackIndex(a5)
+        moveq   #0, d0
+        move.w  A5Seg.ObjPoolStackIndex(a5), d0
+        move.w  a4, (a0,d0.w)           | 释放当前的200_Block
+        move.l  #0x100000, d0
+        move.w  Object.PPrev(a4), d0    | 将此Block从链表中断开
+        movea.l d0, a0
+        move.w  Object.PNext(a4), Object.PNext(a0)
+        move.w  Object.PNext(a4), d0
+        movea.l d0, a0
+        move.w  Object.PPrev(a4), Object.PPrev(a0)
+        move.w  #0xFFFF, Object.PPrev(a4) | 前一个节点为空, 表示不处在运行链中
+        rts
+| End of function FreeObjBlock
+
 
 ZeroObjZbuf:                            | CODE XREF: GameLogicMainLoopEntry+F2p
         lea     A5Seg.ObjZBuf(a5), a0   | size: 0x600
@@ -134,3 +207,10 @@ _CallObjRoutine_nextLayer:                               | CODE XREF: CallObjRou
         bne.s   _CallObjRoutine_layerLoop
         rts
 | End of function CallObjRoutine
+
+TASK_OVER:
+		.word 0x7191                  
+        .byte  0xF
+        .ascii "TASK OVER !!"
+        .byte 0xFF
+

@@ -40,6 +40,15 @@
         move.w  #0xD, d4
         bsr.w   InitBackGroundLayer5
 
+        lea     PalGradWrappedObjRoutine, a0
+        nop
+        move.w  #0x6000, d0			|2148
+        jsr     AllocateObjBlock        | params:
+                                        |     a0: PActionRoutine
+                                        |     d0: level
+                                        | ret:
+                                        |     a1: newObj
+
         move.w  #6, d0
         jsr     SET_SOUND               | params:
                                         |     d0: sound index
@@ -141,6 +150,91 @@ _DisplaySNKlogo_loopIn:                                 | CODE XREF: DisplaySNKl
         rts
 | End of function DisplaySNKlogo
 
+
+
+
+PalGradWrappedObjRoutine:             |21e8  
+
+        lea     (PalGradObjInitRoutine).l, a0
+        move.w  #0xE800, d0
+        jsr     AllocateObjBlock        | params:
+                                        |     a0: PActionRoutine
+                                        |     d0: level
+                                        | ret:
+                                        |     a1: newObj
+        move.l  #TITLE_FIRE_PAL_GRAD1, PalGradObj.pEntryIndex1(a1)
+        move.l  #TITLE_FIRE_PAL_GRAD2, PalGradObj.pEntryIndex2(a1)
+        move.w  #1, PalGradObj.GradDDR(a1)
+        move.w  #1, PalGradObj.GradDDG(a1)
+        move.w  #1, PalGradObj.GradDDB(a1)
+        move.b  #3, PalGradObj.CounterResetVal(a1) | grade frequency
+        move.b  #5, PalGradObj.MaxGradSteps(a1)
+        move.l  a1, Object.EffectChild(a4)
+        move.l  #_PalGradWrappedObjRoutine_step2, (a4)
+
+_PalGradWrappedObjRoutine_step2:                                 | DATA XREF: PalGradWrappedObjRoutine+40o
+        movea.l Object.EffectChild(a4), a0
+        cmpi.b  #0xFF, PalGradObj.CounterResetVal(a0) | grade frequency
+        beq.s   _PalGradWrappedObjRoutine_step2end
+        rts
+| ---------------------------------------------------------------------------
+
+_PalGradWrappedObjRoutine_step2end:                              | CODE XREF: PalGradWrappedObjRoutine+50j
+        lea     (PalGradObjInitRoutine).l, a0
+        move.w  #0xE801, d0
+        jsr     AllocateObjBlock        | params:
+                                        |     a0: PActionRoutine
+                                        |     d0: level
+                                        | ret:
+                                        |     a1: newObj
+        move.l  #TITLE_FIRE_PAL_GRAD2, PalGradObj.pEntryIndex1(a1)
+        move.l  #TITLE_FIRE_PAL_GRAD3, PalGradObj.pEntryIndex2(a1)
+        move.w  #1, PalGradObj.GradDDR(a1)
+        move.w  #1, PalGradObj.GradDDG(a1)
+        move.w  #1, PalGradObj.GradDDB(a1)
+        move.b  #4, PalGradObj.CounterResetVal(a1) | grade frequency
+        move.b  #6, PalGradObj.MaxGradSteps(a1)
+        move.l  a1, Object.EffectChild(a4)
+        move.l  #_PalGradWrappedObjRoutine_step3, Object(a4)
+
+_PalGradWrappedObjRoutine_step3:                                 | DATA XREF: PalGradWrappedObjRoutine+94o
+        movea.l Object.EffectChild(a4), a0
+        cmpi.b  #0xFF, PalGradObj.CounterResetVal(a0) | grade frequency
+        beq.s   _PalGradWrappedObjRoutine_step3end
+        rts
+| ---------------------------------------------------------------------------
+
+_PalGradWrappedObjRoutine_step3end:                              | CODE XREF: PalGradWrappedObjRoutine+A4j
+        lea     (PalGradObjInitRoutine).l, a0
+        move.w  #0xE802, d0
+        jsr     AllocateObjBlock        | params:
+                                        |     a0: PActionRoutine
+                                        |     d0: level
+                                        | ret:
+                                        |     a1: newObj
+        move.l  #TITLE_FIRE_PAL_GRAD3, PalGradObj.pEntryIndex1(a1)
+        move.l  #TITLE_FIRE_PAL_GRAD1, PalGradObj.pEntryIndex2(a1)
+        move.w  #1, PalGradObj.GradDDR(a1)
+        move.w  #1, PalGradObj.GradDDG(a1)
+        move.w  #1, PalGradObj.GradDDB(a1)
+        move.b  #6, PalGradObj.CounterResetVal(a1) | grade frequency
+        move.b  #0xB, PalGradObj.MaxGradSteps(a1)
+        move.l  a1, Object.EffectChild(a4)
+        move.l  #_PalGradWrappedObjRoutine_step4, Object(a4)
+
+_PalGradWrappedObjRoutine_step4:                                 | DATA XREF: PalGradWrappedObjRoutine+E8o
+        movea.l Object.EffectChild(a4), a0
+        cmpi.b  #0xFF, PalGradObj.CounterResetVal(a0) | grade frequency
+        beq.s   _PalGradWrappedObjRoutine_step4end
+        rts
+| ---------------------------------------------------------------------------
+
+_PalGradWrappedObjRoutine_step4end:                              | CODE XREF: PalGradWrappedObjRoutine+F8j
+        bra.w   PalGradWrappedObjRoutine
+| End of function PalGradWrappedObjRoutine
+
+
+
 SNK_LOGO:.word 0x7058                   | DATA XREF: DisplaySubTitle+6o
         .byte 9
         .byte    2
@@ -233,3 +327,16 @@ TITLE_BACKGROUND_SPRITES:
         .long 0xA9CFE700, 0xA9D0E700, 0xA9D1E700, 0xA9D2E700, 0xA9D3E700, 0xA9D4E700, 0xA9D5E700, 0xA9D6E700, 0xA9D7E700, 0xA9D8E700, 0xA9D9E700, 0xA9DAE700, 0xA9DBE700, 0xA9DCE700, 0xA9DDE700, 0xA9DEE700| 240
         .long 0xA9DFE700, 0xA9E0E700, 0xA9E1E700, 0xA9E2E700, 0xA9E3E700, 0xA9E4E700, 0xA9E5E700, 0xA9E6E700, 0xA9E7E700, 0xA9E8E700, 0xA9E9E700, 0xA9EAE700, 0xA9EBE700, 0xA9ECE700, 0xA9EDE700, 0xA9EEE700| 256
         .long 0xA9EFE700, 0xA9F0E700, 0xA9F1E700, 0xA9F2E700, 0xA9F3E700, 0xA9F4E700, 0xA9F5E700, 0xA9F6E700| 272
+
+TITLE_FIRE_PAL_GRAD1:
+		.word 0x12C4                                             
+        .word 0xE4
+        .word 0xFFFF
+TITLE_FIRE_PAL_GRAD2:
+		.word 0x12C5                                               
+        .word 0xE4
+        .word 0xFFFF
+TITLE_FIRE_PAL_GRAD3:
+		.word 0x12C6                                               
+        .word 0xE4
+        .word 0xFFFF

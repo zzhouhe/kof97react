@@ -52,8 +52,10 @@ ScreenObj.BackgroundSpriteHeightFromParam = 0xd8
 
 Object = 0x0
 Object.PNext = 0x4
-Object.PPrev = 0x8
-
+Object.PPrev = 0x6
+Object.Level = 0x8
+Object.TagString = 0x10
+Object.EffectChild = 0x88
 
 
 A5Seg.MainNextRoutine = 0x500
@@ -92,12 +94,21 @@ A5Seg.UpdateOffsetInSCB2 = 0x3cfe | 0x10bcfe
 PaletteTempQueueStart = 0x108000 + 0x4022	|0x10c022
 A5Seg.PaletteTempQueueStart = 0x4022
 A5Seg.PAL_IN_POINT = 0x5924
+A5Seg.ColorTargetReachedFlag = 0x5928
+A5Seg.PalGradDeltaR = 0x592e
+A5Seg.PalGradDeltaG = 0x5930
+A5Seg.PalGradDeltaB = 0x5932
 A5Seg.SD_IN_POINT = 0x5936
 A5Seg.SD_OUT_POINT = 0x5937
 A5Seg.BGM_CODE      = 0x5938
 A5Seg.SOUND_CODE_W  = 0x593a
 A5Seg.SOUND_BUFFER = 0x593e     |size: 0x100
 
+A5Seg.pPalGradEntry1 = 0x649e
+A5Seg.pPalGradEntry2 = 0x64a2
+A5Seg.PalGradTargetR= 0x64a6
+A5Seg.PalGradTargetG = 0x64a8
+A5Seg.PalGradTargetB = 0x64aa
 A5Seg.FirstObjIndexInZBuf = 0x64d2
 A5Seg.pGhostBuf = 0x64d6
 A5Seg.TextOutputOffset = 0x64f6
@@ -107,5 +118,17 @@ A5Seg.BackgroundSpritesXTempBuf = 0x6506
 A5Seg.PaletteSubGroupIndex = 0x66be
 A5Seg.GlobalCamaraYDelta = 0x6ce4
 
-
-
+PalGradObj = 0x0
+PalGradObj.pEntryIndex1 = 0xa
+PalGradObj.pEntryIndex2 = 0xe
+PalGradObj.GradDeltaR = 0x12
+PalGradObj.GradDeltaG = 0x14
+PalGradObj.GradDeltaB = 0x16
+PalGradObj.Counter = 0x18
+PalGradObj.GradDDR = 0x1a
+PalGradObj.GradDDG = 0x1c
+PalGradObj.GradDDB = 0x1e
+PalGradObj.CounterResetVal = 0x20
+PalGradObj.MaxGradSteps = 0x21
+PalGradObj.RGBbuf1 = 0x22
+PalGradObj.RGBbuf2 = 0x112
