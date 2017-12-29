@@ -120,7 +120,7 @@ l2a56e:
 dymmy_RTE:
 		rte
 
-PLAYER_START:
+PLAYER_START:		|212
 		rts
 USER:
 		lea     (0x108000).l, a5         | set the a5 for the user mode
@@ -447,9 +447,10 @@ _mainloop_spinLoop:
 
         bsr.w   CallObjRoutine
 
+        jsr     (ShowPressStartButton).l
         |jsr     DisplayZbuf             | 把 Zbuf 中的 obj 逐个更新到 VRAM 中
-                  
-        
+                          
+        jsr     ShowCoin
         
         tst.w   A5Seg.COINS_SOUND(a5)             | $10009E COINS
         beq.s   _next_loop
@@ -463,3 +464,181 @@ _mainloop_spinLoop:
 _next_loop:                               
         bra.w   _MainLoopStart
 | End of function GameLogicMainLoopEntry
+
+ShowCoin:     
+        lea     (0xD00034).l, a1        | "Internal" credit counters for player 1 and player 2 (BCD)       
+        move.w  #0x73BD, d2             | player2 credits position
+        swap    d2
+
+        lea     FIX_CRESITS, a2         | 'CREDITS'
+        move.b  (a1), d0
+        cmpi.b  #2, d0
+        bcc.s   loc_9514
+        lea     FIX_CRESIT, a2          | 'CREDIT'
+
+loc_9514:                               
+        moveq   #5, d7
+
+_ShowCoin_loop:                                  
+        move.w  (a2)+, d2
+        move.l  d2, (REG_VRAMADDR).l        | REG_VRAMADDR
+        addi.l  #0x200000, d2
+        dbf     d7, _ShowCoin_loop
+        move.b  (a1), d0
+        andi.w  #0xFF, d0
+        move.w  d0, d1
+        lsr.w   #4, d1
+        addi.w  #0x3F0, d1
+        move.w  d1, d2
+        move.l  d2, (0x3C0000).l
+        addi.l  #0x200000, d2
+        andi.w  #0xF, d0
+        addi.w  #0x3F0, d0
+        move.w  d0, d2
+        move.l  d2, (0x3C0000).l                           
+        rts
+| End of function ShowCoin
+
+FIX_CRESIT:.byte 3, 0xE6, 3, 0xE7, 3, 0xE8, 3, 0xE9, 3, 0xEA, 3, 0xFF                                         
+FIX_CRESITS:.byte 3, 0xE0, 3, 0xE1, 3, 0xE2, 3, 0xE3, 3, 0xE4, 3, 0xE5
+
+
+
+ShowPressStartButton:                   
+        tst.b   (BIOS_USER_MODE).l      | $10FDAF BIOS_USER_MODE
+                                        | Set the current status of the game program with the game 
+                                        | 0 = Start-up initialization, eye-catcher
+                                        | 1 = Title, game demo
+                                        | 2 = Game in progress
+                                        | Game selection is enabled only when the mode is " 1" for the MVS. Make
+                                        | sure to change the mode to "2" when the game starts after the demo.
+        bne.s   loc_19D2
+        rts
+| ---------------------------------------------------------------------------
+
+loc_19D2:                               
+        cmpi.b  #1, (BIOS_USER_MODE).l  | $10FDAF BIOS_USER_MODE
+                                        | Set the current status of the game program with the game 
+                                        | 0 = Start-up initialization, eye-catcher
+                                        | 1 = Title, game demo
+                                        | 2 = Game in progress
+                                        | Game selection is enabled only when the mode is " 1" for the 
+                                        | sure to change the mode to "2" when the game starts after the 
+        bne.s   loc_19F0
+        lea     (TitlePressButtonStruct).l, a4
+        bsr.w   DipPressButtonOnTitle   | params:
+                                        |     a4: fix lay struct
+        rts
+| ---------------------------------------------------------------------------
+
+loc_19F0:                              
+        rts
+| End of function ShowPressStartButton
+
+
+
+| params:
+|     a4: fix lay struct
+
+DipPressButtonOnTitle:                  
+        move.w  #0xA, FixLayerStruct(a4)
+
+        move.w  #0x13, FixLayerStruct.y(a4)
+        move.l  #aPress1pOr2pButton, FixLayerStruct.PCHAR(a4) | "PRESS 1P OR 2P BUTTON"
+        bsr.w   IfCreditP2Exist         | ret:
+                                        |     d0: 0 not exist, 1 exist
+        move.w  d0, -(sp)
+                            
+        bsr.w   IfCreditP1Exist         |     d0: 0 not exist, 1 exist
+        move.w  (sp)+, d2
+        move.w  d0, d3
+
+        add.w   d3, d2
+        move.l  #aPress1pOr2pButton, FixLayerStruct.PCHAR(a4) | "PRESS 1P OR 2P BUTTON"
+        cmpi.b  #2, d2
+        bcc.s   loc_1CCE
+        move.l  #aPress1pButton, FixLayerStruct.PCHAR(a4) | "  PRESS 1P BUTTON    "
+        tst.b   d2
+        bne.s   loc_1CCE
+
+        move.l  #aInsertCoin, FixLayerStruct.PCHAR(a4)
+
+loc_1CCE:                                                                       
+        move.b  -0x7F65(a5), d0			| frame counter .low byte
+        andi.b  #0xF, d0
+        bne.s   loc_1CDE
+        eori.b  #1, FixLayerStruct.Flag(a4) | bit0: 1, show
+
+loc_1CDE:                               | CODE XREF: DipPressButtonOnTitle+A6j
+        btst    #0, FixLayerStruct.Flag(a4) | bit0: 1, show
+        beq.s   _DipPressButtonOnTitle_clear
+        move.w  FixLayerStruct(a4), d0
+        move.w  FixLayerStruct.y(a4), d1
+        jsr     (ScreenXYToFixMapVRAMAddr).l | params:
+                                        |     d0: x
+                                        |     d1: y
+                                        | ret:
+                                        |     d0.highword: offset in VRAM
+        movea.l FixLayerStruct.PCHAR(a4), a0
+        move.w  #0x1300, d0
+        move.l  #0x200000, d1
+        jsr     (LoopFixLayOut).l       | params:
+                                        |     a0: pChar
+                                        |     d0: addr | pal
+                                        |     d1: step
+        rts
+| ---------------------------------------------------------------------------
+
+_DipPressButtonOnTitle_clear:                                 
+        move.w  FixLayerStruct(a4), d0
+        move.w  FixLayerStruct.y(a4), d1
+        move.w  #0x14, d2
+        move.w  #0, d3
+        jsr     (FixlayVRAMClear).l     | params:
+                                        |     d0: x
+                                        |     d1: y
+                                        |     d2: width
+                                        |     d3: height
+        rts
+| End of function DipPressButtonOnTitle
+
+
+| ret:
+|     d0: 0 not exist, 1 exist
+
+IfCreditP2Exist:                        
+        move.w  #0x100, (BIOS_CREDIT_DEC).l | Credit decrement value for each player when calling
+                                        | CREDIT DOWN.
+        movem.l d0-a6, -(sp)
+        jsr     0xC00450                | CREDIT CHECK
+        movem.l (sp)+, d0-a6
+        move.w  (BIOS_CREDIT_DEC).l, d0 | Credit decrement value for each player when calling
+                                        | CREDIT DOWN.
+        lsr.w   #8, d0
+        rts
+| End of function IfCreditP2Exist
+
+| ret:
+|     d0: 0 not exist, 1 exist
+
+IfCreditP1Exist:                        
+        move.w  #1, (BIOS_CREDIT_DEC).l | Credit decrement value for each player when calling
+                                        | CREDIT DOWN.
+        movem.l d0-a6, -(sp)
+        jsr     0xC00450                | CREDIT_CHECK
+        movem.l (sp)+, d0-a6
+        move.w  (BIOS_CREDIT_DEC).l, d0 | Credit decrement value for each player when calling
+                                        | CREDIT DOWN.
+        rts
+| End of function IfCreditP1Exist
+
+
+aPress1pButton:
+		.ascii "  PRESS 1P BUTTON    "
+        .byte 0xFF
+aPress1pOr2pButton:
+		.ascii "PRESS 1P OR 2P BUTTON"
+        .byte 0xFF
+aInsertCoin:
+		.ascii "    INSERT COIN      "
+        .byte 0xFF

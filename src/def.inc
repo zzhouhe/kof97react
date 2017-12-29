@@ -3,6 +3,7 @@ Backup_Size  = 0x100
 BIOS_SYSTEM_MODE = 0x10FD80
 BIOS_USER_REQUEST = 0x10FDAE
 BIOS_USER_MODE = 0x10FDAF
+BIOS_CREDIT_DEC = 0x10fdb0
 BIOS_SELECT_TIMER = 0x10FDDA
 
 PAL_START = 0x2cfff0
@@ -66,7 +67,8 @@ A5Seg.VideoSpecialModes = 0x2788
 A5Seg.TileUpdateFlag = 0x2789
 |A5Seg.PaletteUpdateFlag = 0x278a
 A5Seg.IsPlayerExist = 0x27f2
-
+A5seg.TitlePressButtonStruct = 0x282a
+TitlePressButtonStruct = 0x10a82a
 A5Seg.ObjZBuf = 0x286a
 A5Seg.NumInObjZBuf = 0x2e6c
 A5Seg.TileVertPositionsBuff_Main = 0x2e6e
@@ -132,3 +134,8 @@ PalGradObj.CounterResetVal = 0x20
 PalGradObj.MaxGradSteps = 0x21
 PalGradObj.RGBbuf1 = 0x22
 PalGradObj.RGBbuf2 = 0x112
+
+FixLayerStruct = 0
+FixLayerStruct.y = 2
+FixLayerStruct.Flag = 4
+FixLayerStruct.PCHAR = 8

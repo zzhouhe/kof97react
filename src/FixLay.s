@@ -3,6 +3,9 @@
 .globl		SetFixlayText
 .globl		SetFixlayTextEx
 .globl		FixlayOutputHexVal
+.globl		ScreenXYToFixMapVRAMAddr
+.globl		FixlayVRAMClear
+.globl		LoopFixLayOut
 
 ClearFixlay:                                                                    
         lea     (REG_VRAMRW).l, a0        | REG_VRAMRW
@@ -150,3 +153,71 @@ HexCharTable:
         .byte 0x44 | D
         .byte 0x45 | E
         .byte 0x46 | F
+
+
+| params:
+|     d0: x
+|     d1: y
+| ret:
+|     d0.highword: offset in VRAM
+
+ScreenXYToFixMapVRAMAddr:              
+        lsl.w   #5, d0
+        add.w   d1, d0
+        addi.w  #0x7002, d0             | 2 hidden lines on the top
+        swap    d0
+        rts
+| End of function ScreenXYToFixMapVRAMAddr
+
+| params:
+|     d0: x
+|     d1: y
+|     d2: width
+|     d3: height
+
+FixlayVRAMClear:                        
+        bsr   ScreenXYToFixMapVRAMAddr | params:
+                                        |     d0: x
+                                        |     d1: y
+                                        | ret:
+                                        |     d0.highword: offset in VRAM
+        move.w  #0xF20, d0              | Tile num
+        move.l  d0, d4
+        move.l  #0x200000, d1
+        moveq   #0, d6
+
+_FixlayVRAMClear_dbfLoopOut:                            | CODE XREF: FixlayVRAMClear+28j
+        move.w  d2, d5
+
+_FixlayVRAMClear_dbfLoopIn:                             | CODE XREF: FixlayVRAMClear+1Aj
+        move.l  d0, (0x3C0000).l        | high: REG_VRAMADDR
+                                        | low: REG_VRAMRW
+        add.l   d1, d0
+        dbf     d5, _FixlayVRAMClear_dbfLoopIn          | high: REG_VRAMADDR
+                                        | low: REG_VRAMRW
+        move.l  d4, d0
+        addi.l  #0x10000, d6
+        add.l   d6, d0
+        dbf     d3, _FixlayVRAMClear_dbfLoopOut
+        rts
+| End of function FixlayVRAMClear
+
+| params:
+|     a0: pChar
+|     d0: addr | pal
+|     d1: step
+
+LoopFixLayOut:                         
+        move.b  (a0)+, d0
+        cmpi.b  #0xFF, d0
+        beq.w   _LoopFixLayOut_ret
+        move.l  d0, (0x3C0000).l
+        add.l   d1, d0
+        bra   LoopFixLayOut           | params:
+                                        |     a0: pChar
+                                        |     d0: addr | pal
+                                        |     d1: step
+
+_LoopFixLayOut_ret:                                   
+        rts
+| End of function LoopFixLayOut

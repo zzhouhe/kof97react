@@ -48,6 +48,8 @@
                                         |     d0: level
                                         | ret:
                                         |     a1: newObj
+        lea     (FIX_TM_LOGO).l, a0
+        jsr     SetFixlayText           
 
         move.w  #6, d0
         jsr     SET_SOUND               | params:
@@ -235,7 +237,7 @@ _PalGradWrappedObjRoutine_step4end:                              | CODE XREF: Pa
 
 
 
-SNK_LOGO:.word 0x7058                   | DATA XREF: DisplaySubTitle+6o
+SNK_LOGO:.word 0x7058                   
         .byte 9
         .byte    2
         .word 0xF200
@@ -340,3 +342,16 @@ TITLE_FIRE_PAL_GRAD3:
 		.word 0x12C6                                               
         .word 0xE4
         .word 0xFFFF
+
+FIX_TM_LOGO:
+		.word 0x7492               
+        .byte    5
+        .byte 0x86  
+        .byte 0x87  
+        .byte  0xD
+        .byte  0xA
+        .byte 0x96  
+        .byte 0x97  
+        .byte  0xD
+        .byte  0xA
+        .byte 0xFF
