@@ -3,6 +3,7 @@
 .globl	Append32PaletteToTail
 .globl	LoadAnimationAndPal
 .globl	PalGradObjInitRoutine
+.globl	LoadPalBlockEntries
 
 FlushUpdatePalette:                     
       

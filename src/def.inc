@@ -4,6 +4,8 @@ BIOS_SYSTEM_MODE = 0x10FD80
 BIOS_USER_REQUEST = 0x10FDAE
 BIOS_USER_MODE = 0x10FDAF
 BIOS_CREDIT_DEC = 0x10fdb0
+BIOS_START_FLAG = 0x10fdb4
+BIOS_PLAYER_MOD1 = 0x10fdb6
 BIOS_SELECT_TIMER = 0x10FDDA
 
 PAL_START = 0x2cfff0
@@ -15,6 +17,8 @@ REG_VRAMMOD = 0x3c0004
 REG_WATCHDOG = 0x3C0001
 REG_IRQACK = 0x3C000C
 REG_SOUND   =   0x320000
+
+BIOS_CLEAR_SPRITES = 0xC004C8
 
 COINS_SOUND = 0x0010009E
 
@@ -57,6 +61,7 @@ Object.PPrev = 0x6
 Object.Level = 0x8
 Object.TagString = 0x10
 Object.EffectChild = 0x88
+Object.selfBuf1 = 0xd2
 
 
 A5Seg.MainNextRoutine = 0x500
@@ -66,6 +71,7 @@ A5Seg.VBlankSpinEvent = 0x2785
 A5Seg.VideoSpecialModes = 0x2788
 A5Seg.TileUpdateFlag = 0x2789
 |A5Seg.PaletteUpdateFlag = 0x278a
+A5Seg.PLAYER1_phase = 0x2790
 A5Seg.IsPlayerExist = 0x27f2
 A5seg.TitlePressButtonStruct = 0x282a
 TitlePressButtonStruct = 0x10a82a
@@ -76,6 +82,8 @@ A5Seg.BackUpTileOffsetInSCB1_Main = 0x306e
 A5Seg.TileOffsetInSCB1_Main = 0x3070
 A5Seg.ObjTotalSpriteNumbers_Main = 0x3072
 A5Seg.SpriteAlreadyUsed_Main = 0x3076
+A5Seg.ScreenLeftX = 0x3082
+A5Seg.ScreenTopY = 0x3092
 A5Seg.BackGroundObjLayer0 = 0x30b2
 A5Seg.BackGroundObjLayer1 = 0x31b2
 A5Seg.BackGroundObjLayer2 = 0x32b2
@@ -117,6 +125,7 @@ A5Seg.TextOutputOffset = 0x64f6
 A5Seg.TextOutputEntryHigh = 0x64f8
 A5Seg.TextOutputDefaultPalIndex = 0x64fa
 A5Seg.BackgroundSpritesXTempBuf = 0x6506
+A5Seg.WhoPushedStart = 0x66bc
 A5Seg.PaletteSubGroupIndex = 0x66be
 A5Seg.GlobalCamaraYDelta = 0x6ce4
 

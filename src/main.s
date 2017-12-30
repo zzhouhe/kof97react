@@ -120,8 +120,6 @@ l2a56e:
 dymmy_RTE:
 		rte
 
-PLAYER_START:		|212
-		rts
 USER:
 		lea     (0x108000).l, a5         | set the a5 for the user mode
 		bclr    #7, (BIOS_SYSTEM_MODE).l | $10FD80 BIOS_SYSTEM_MODE
@@ -365,6 +363,7 @@ _switchLoop:
         cmp.w   (0x200000).l, d0
         bne.s   _switchLoop             | switch to bank 2
         
+		clr.w   A5Seg.PLAYER1_phase(a5)
         clr.l   A5Seg.DebugDips(a5)             | clear Debug DIPs     
         rts
 | End of function InitSystem
@@ -412,18 +411,6 @@ InitScreenAndObjectPool:           |568
         rts
 | End of function InitScreenAndObjectPool
 
-SetBackgroundNoUse:                     
-                                        
-        andi.b  #0x7F, A5Seg.BackGroundObjLayer0+0x90(a5) | top layer obj     
-        andi.b  #0x7F, A5Seg.BackGroundObjLayer1+0x90(a5) 
-        andi.b  #0x7F, A5Seg.BackGroundObjLayer2+0x90(a5) 
-        andi.b  #0x7F, A5Seg.BackGroundObjLayer3+0x90(a5) 
-        andi.b  #0x7F, A5Seg.BackGroundObjLayer4+0x90(a5) 
-        andi.b  #0x7F, A5Seg.BackGroundObjLayer5+0x90(a5) 
-        andi.b  #0x7F, A5Seg.BackGroundObjLayer6+0x90(a5) 
-        andi.b  #0x7F, A5Seg.BackGroundObjLayer7+0x90(a5) 
-        rts
-| End of function SetBackgroundNoUse
 
 
 GameLogicMainLoopEntry:           |0x5cc      
@@ -642,3 +629,216 @@ aPress1pOr2pButton:
 aInsertCoin:
 		.ascii "    INSERT COIN      "
         .byte 0xFF
+
+| A request is made, if the pressing of the start button is detected, with
+| sufficient credit, in the SYSTEM IO. Or, a call is made when the
+| MVS-forced start is past the time limit.
+
+PLAYER_START:                           
+        lea     (0x108000).l, a5
+        moveq   #0, d0
+        move.b  (BIOS_START_FLAG).l, d0     | BIOS_START_FLAG
+                                        | Used when calling the PLAYER START subroutine. The 4 LSBs
+                                        | correspond to the player who pushed start.
+        andi.b  #3, d0
+        move.b  d0, A5Seg.WhoPushedStart(a5)
+        lea     A5Seg.PLAYER1_phase(a5), a0 | 0: not playing,
+                                        | 1: playing init,
+                                        | 2: playing
+        moveq   #0, d1
+        bsr.w   SetPlayingStart         | params:
+                                        |     (a0): 0,Never played; 1,Playing,
+                                        |         2,Continue option being displayed; 3,Game over
+        lea     A5Seg.PLAYER1_phase(a5), a0 | 0: not playing,
+                                        | 1: playing init,
+                                        | 2: playing
+        moveq   #1, d1
+        bsr.w   SetPlayingStart         | params:
+                                        |     (a0): 0,Never played; 1,Playing,
+                                        |         2,Continue option being displayed; 3,Game over
+        tst.b   A5Seg.WhoPushedStart(a5)
+        beq.w   _PLAYER_START_noStart
+        cmpi.b  #2, (BIOS_USER_MODE).l  | $10FDAF BIOS_USER_MODE
+                                        | Set the current status of the game program with the game software.
+                                        | 0 = Start-up initialization, eye-catcher
+                                        | 1 = Title, game demo
+                                        | 2 = Game in progress
+                                        | Game selection is enabled only when the mode is " 1" for the MVS. Make
+                                        | sure to change the mode to "2" when the game starts after the demo.
+        bne.s   _PLAYER_START_help
+|        jsr     (sub_196E).l
+|        tst.w   d0
+|        bne.w   loc_968A
+|        cmpi.b  #3, A5Seg.field_2784(a5)
+|        bne.w   loc_97AA
+|        jsr     (sub_1952).l
+|        cmpi.w  #3, d0
+|        bne.w   loc_9740
+|        bra.w   loc_96D4
+| ---------------------------------------------------------------------------
+
+_PLAYER_START_end:                     
+|        andi.b  #0xFD, A5Seg.PaletteUpdateFlag(a5) | bit0: 0: use bank Index 1; 1: use bank Index 0
+                                        | bit1: 1, mask flush screen
+                                        | bit6: 1, mask palette update
+                                        | bit7: 1, only update current palette bank
+|        andi.b  #0x2F, A5Seg.VideoSpecialModes(a5) | bit0: 1, not show back obj
+                                        | bit1: 1, 显示分数排名
+                                        | bit2: 1, demo mod
+                                        | bit3: 1, not show coin and difficulty
+                                        | bit4: 1, role fast speed
+                                        | bit6: 1, 3倍慢速
+                                        | bit7: 1, not show background
+|        move.w  #0, A5Seg.BackDoorColor(a5)
+|        clr.b   A5Seg.field_2784(a5)
+        move.b  #2, (BIOS_USER_MODE).l  | $10FDAF BIOS_USER_MODE
+                                        | Set the current status of the game program with the game software.
+                                        | 0 = Start-up initialization, eye-catcher
+                                        | 1 = Title, game demo
+                                        | 2 = Game in progress
+                                        | Game selection is enabled only when the mode is " 1" for the MVS. Make
+                                        | sure to change the mode to "2" when the game starts after the demo.
+        bsr.w   AckBiosPlaying
+|        bsr.w   InitSelObjs
+
+_PLAYER_START_noStart:                  
+
+        move.b  A5Seg.WhoPushedStart(a5), d0
+        or.b    d0, A5Seg.IsPlayerExist(a5) | bit0: p1 exist
+                                        | bit1: p2 exist
+        move.b  d0, (BIOS_START_FLAG).l     | if d0 = 0, then the credits will not go down
+        rts
+| ---------------------------------------------------------------------------
+
+_PLAYER_START_help:                                
+|        andi.b  #0xF1, A5Seg.VideoSpecialModes(a5) | bit0: 1, not show back obj
+                                        | bit1: 1, 显示分数排名
+                                        | bit2: 1, demo mod
+                                        | bit3: 1, not show coin and difficulty
+                                        | bit4: 1, role fast speed
+                                        | bit6: 1, 3倍慢速
+                                        | bit7: 1, not show background
+|        clr.w   A5Seg.field_6BE4(a5)
+		 move.w  #0, (0x3C0006).l        | clear auto animation speed
+|        andi.b  #0xFD, A5Seg.PaletteUpdateFlag(a5) | bit0: 0: use bank Index 1; 1: use bank Index 0
+                                        | bit1: 1, mask flush screen
+                                        | bit6: 1, mask palette update
+                                        | bit7: 1, only update current palette bank
+|        ori.b   #1, A5Seg.field_66BF(a5)
+|        andi.b  #0xFD, A5Seg.PauseFlag(a5) | bit1: 1, alow pause
+                                        | bit3: 1, remap P1 Key A,B,C,D
+                                        | bit4: 1, remap P2 Key A,B,C,D
+                                        | bit6: 0, need update by one frame(暂停时的单帧模式)
+                                        | bit7: 1, game paused
+|        move.b  #0xFF, A5Seg.field_6C33(a5)
+ 
+        movem.l d0-d1/a0, -(sp)
+        move.w  #0, d0
+        jsr     SET_SOUND               | params:
+                                        |     d0: sound index
+        movem.l (sp)+, d0-d1/a0
+        movem.l d0-d1/a0, -(sp)
+        move.w  #2, d0
+        jsr     SET_SOUND               | params:
+                                        |     d0: sound index
+        movem.l (sp)+, d0-d1/a0
+        movem.l d0-d1/a0, -(sp)
+        move.w  #2, d0
+        jsr     SET_SOUND               | params:
+                                        |     d0: sound index
+        movem.l (sp)+, d0-d1/a0
+        movem.l d0-d1/a0, -(sp)
+        move.w  #6, d0
+        jsr     SET_SOUND               | params:
+                                        |     d0: sound index
+        movem.l (sp)+, d0-d1/a0
+        move.l  #HelpRoutine, A5Seg.MainNextRoutine(a5)
+        bra.w   _PLAYER_START_end
+| ---------------------------------------------------------------------------
+
+| ---------------------------------------------------------------------------
+
+|loc_96D4:                               | CODE XREF: PLAYER_START+60j
+|        tst.b   (BIOS_MVS_FLAG).l       | $10FD82 BIOS_MVS_FLAG
+|                                        | 0:AES,
+|                                        | 1:MVS
+|        bne.s   loc_96EE
+|        bsr.w   sub_9812
+|        cmpi.w  #2, d1
+|        beq.w   _PLAYER_START_noStart
+|        tst.w   d1
+|        bne.w   loc_9752
+|
+|loc_96EE:                               | CODE XREF: PLAYER_START+16Cj
+|        movem.l d0-d1/a0, -(sp)
+|        move.w  #0, d0
+|        jsr     SET_SOUND               | params:
+|                                        |     d0: sound index
+|        movem.l (sp)+, d0-d1/a0
+|        movem.l d0-d1/a0, -(sp)
+|        move.w  #2, d0
+|        jsr     SET_SOUND               | params:
+|                                        |     d0: sound index
+|        movem.l (sp)+, d0-d1/a0
+|        movem.l d0-d1/a0, -(sp)
+|        move.w  #2, d0
+|        jsr     SET_SOUND               | params:
+|                                        |     d0: sound index
+|        movem.l (sp)+, d0-d1/a0
+|        movem.l d0-d1/a0, -(sp)
+|        move.w  #6, d0
+|        jsr     SET_SOUND               | params:
+|                                        |     d0: sound index
+|        movem.l (sp)+, d0-d1/a0
+|        andi.b  #0xFE, 0x66BF(a5)
+|        move.l  #loc_22FAC, 0x500(a5)
+|        bra.w   loc_95D2
+| ---------------------------------------------------------------------------
+
+| ---------------------------------------------------------------------------
+
+| End of function PLAYER_START
+
+| params:
+|     (a0): 0,Never played; 1,Playing,
+|         2,Continue option being displayed; 3,Game over
+
+SetPlayingStart:                        
+        
+        btst    d1, A5Seg.WhoPushedStart(a5)
+        beq.s   _SetPlayingStart_end
+        tst.b   (a0,d1.w)
+        bne.s   _SetPlayingStart_end
+        move.b  #1, (a0,d1.w)
+        rts
+| ---------------------------------------------------------------------------
+
+_SetPlayingStart_end:                                   
+                                       
+        bclr    d1, A5Seg.WhoPushedStart(a5)
+        rts
+| End of function SetPlayingStart
+
+
+
+AckBiosPlaying:                        
+        moveq   #1, d0
+
+_AckBiosPlaying_loop:                  
+        moveq   #1, d1
+        sub.w   d0, d1
+        btst    d1, A5Seg.WhoPushedStart(a5)
+        beq.w   loc_980C
+        lea     (BIOS_PLAYER_MOD1).l, a0 | $10FDB6 BIOS_PLAYER_MOD1
+                                        | Sets player 1 status.
+                                        | 0:Never played,
+                                        | 1:Playing,
+                                        | 2:Continue option being displayed,
+                                        | 3:Game over
+        adda.w  d1, a0
+        move.b  #1, (a0)
+
+loc_980C:                              
+        dbf     d0, _AckBiosPlaying_loop
+        rts
+| End of function AckBiosPlaying

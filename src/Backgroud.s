@@ -3,6 +3,9 @@
 .globl		InitBackGroundLayer3
 .globl		InitBackGroundLayer4
 .globl		InitBackGroundLayer5
+.globl		SetBackgroundNoUse
+.globl		BackGroundLayerRoutine
+.globl		InitBackGroundLayer
 
 InitLayerEnd:                           
         move.l  a2, ScreenObj.pDataFromParam(a1)
@@ -69,6 +72,8 @@ InitBackGroundLayer5:
 | params:
 |     d0: back layer index
 |     a0: proc routine
+| ret:
+|     a1: screen obj
 InitBackGroundLayer:                   
         lea     A5Seg.BackGroundObjLayer0(a5), a1 | ×î¶¥²ã±³¾°Obj
         move.w  d0, -(sp)
@@ -482,3 +487,16 @@ _BackGroundLayerRoutine_step4:                                 | CODE XREF: Back
                                         |     a4: screen obj
         rts
 
+
+SetBackgroundNoUse:                     
+                                        
+        andi.b  #0x7F, A5Seg.BackGroundObjLayer0+0x90(a5) | top layer obj     
+        andi.b  #0x7F, A5Seg.BackGroundObjLayer1+0x90(a5) 
+        andi.b  #0x7F, A5Seg.BackGroundObjLayer2+0x90(a5) 
+        andi.b  #0x7F, A5Seg.BackGroundObjLayer3+0x90(a5) 
+        andi.b  #0x7F, A5Seg.BackGroundObjLayer4+0x90(a5) 
+        andi.b  #0x7F, A5Seg.BackGroundObjLayer5+0x90(a5) 
+        andi.b  #0x7F, A5Seg.BackGroundObjLayer6+0x90(a5) 
+        andi.b  #0x7F, A5Seg.BackGroundObjLayer7+0x90(a5) 
+        rts
+| End of function SetBackgroundNoUse
