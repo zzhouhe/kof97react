@@ -31,7 +31,7 @@ PADBYTE = 0xff
 
 OBJS = $(TMPDIR)/main.o $(TMPDIR)/Palette.o $(TMPDIR)/Sound.o $(TMPDIR)/FixLay.o \
 		$(TMPDIR)/Sprites.o $(TMPDIR)/Object.o $(TMPDIR)/Title.o $(TMPDIR)/Backgroud.o \
-		$(TMPDIR)/Help.o
+		$(TMPDIR)/Help.o $(TMPDIR)/Action.o $(TMPDIR)/20_effect.o
 
 #####################
 # Compilation Flags #
@@ -53,6 +53,9 @@ test.o : $(OBJS)
 	$(LD) $(CCFLAGS) $(LDFLAGS) $(OBJS) -o $@
 
 $(TMPDIR)/%.o: src/%.s
+	$(AS) -I$(INCDIR) $(ASFLAGS) $< -o $@
+
+$(TMPDIR)/%.o: src/CH/%.s
 	$(AS) -I$(INCDIR) $(ASFLAGS) $< -o $@
 
 clean:

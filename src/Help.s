@@ -14,11 +14,6 @@ HelpRoutine:                            | DATA XREF: PLAYER_START+110o
         jsr     ClearFixlay
         move.l  #_HelpRoutine_step2, A5Seg.MainNextRoutine(a5)
         rts
-| End of function HelpRoutine
-
-
-| =============== S U B R O U T I N E =======================================
-
 
 _HelpRoutine_step2:  
         moveq   #1, d0
@@ -65,6 +60,25 @@ _HelpRoutine_step3:
         move.w  #0, ScreenObj.YfromParam(a1)
         move.w  #0x13, ScreenObj.BackgroundSpriteWidthFromParam(a1) | width - 1
         move.w  #0xD, ScreenObj.BackgroundSpriteHeightFromParam(a1) | height - 1
+
+        lea     (TextoutCursorRoutine).l, a0
+        move.w  #0x7500, d0
+        jsr     AllocateObjBlock        | params:
+                                        |     a0: PActionRoutine
+                                        |     d0: level
+                                        | ret:
+                                        |     a1: newObj
+        move.l  a4, Object.ParentObj(a1)
+        move.l  #aINFORMATION, Object.EffectChild(a1) | "I N F O R M A T I O N"
+        move.w  #0x56, Object.selfBuf2(a1) | X
+        move.w  #0x25, Object.selfBuf2+2(a1) | Y
+        move.w  #0x120, Object.selfBuf2+4(a1) | X fixlay Vram offset
+        move.w  #4, Object.selfBuf2+6(a1) | Y fixlay Vram offset
+        move.w  #2, Object.selfBuf1(a1) | cursor move counter
+        move.w  #2, Object.selfBuf1+6(a1) | change char pal counter
+        move.w  #0x3C, Object.selfBuf1+4(a1) | freeze time at beginning
+        move.b  #0xB9, Object.selfBuf2+0xC(a1) | pal | tile num.high
+        clr.b   Object.selfBuf2+0xF(a4)
 
         move.l  #_HelpRoutine_step4, A5Seg.MainNextRoutine(a5)
 _HelpRoutine_step4:                   
@@ -170,12 +184,136 @@ ClearFixlayHowToPlay:                   | CODE XREF: InitFixlayHowToPlay+1Cj
         rts
 | End of function ClearFixlayHowToPlay		
 
-_InitFixlayHowToPlay_destroy:                              | CODE XREF: InitFixlayHowToPlay+12j
+_InitFixlayHowToPlay_destroy:
         bsr.s   ClearFixlayHowToPlay
         jmp     FreeObjBlock            | params:
 | END OF FUNCTION CHUNK FOR InitFixlayHowToPlay |     a4: Obj        
 
-String_HOW_TO_PLAY:.word 0x7152         
+
+ TextoutCursorRoutine:
+         move.w  #0xFFFF, Object.RoleShrinkRate(a4) | 人物整体比例
+         move.w  #0xFFFF, Object.Z(a4)   | bit 0~2: 同一图层中的细比较
+                                         | bit4以上: 在 Zbuf 中的索引
+         move.w  #0x22, Object.ChCode(a4)
+         move.w  #0xD5, Object.ActCode(a4)
+         move.w  Object.selfBuf1(a4), Object.selfBuf1+2(a4)
+         move.w  Object.selfBuf1+4(a4), Object.selfBuf1(a4) | buf1 + 4 : freeze time at beginning
+         move.w  Object.selfBuf1+6(a4), Object.speedX(a4)
+         clr.w   Object.selfBuf2+8(a4)   | delta X
+         clr.w   Object.selfBuf2+0xA(a4) | delta Y
+         clr.w   Object.FixlayVramTextXDelta(a4)
+         clr.w   Object.FixlayVramTextYDelta(a4)
+         move.l  #_TextoutCursorRoutine_step2, Object(a4)
+
+ _TextoutCursorRoutine_step2:
+         bsr.w   CursorMove
+         subq.w  #1, Object.selfBuf1(a4)
+         bpl.w   CallNextMove
+         move.w  Object.selfBuf1+2(a4), Object.selfBuf1(a4) | reset counter
+         addi.w  #8, Object.selfBuf2+8(a4) | move right a char positon
+         bsr.w   CursorMove
+         move.l  #_TextoutCursorRoutine_step3, (a4)
+
+ _TextoutCursorRoutine_step3:
+         movea.l Object.EffectChild(a4), a0 | text buf
+         cmpi.b  #0xD, (a0)
+         beq.w   _TextoutCursorRoutine_newLine
+         cmpi.b  #0xFF, (a0)
+         beq.w   _TextoutCursorRoutine_textEnd
+         move.b  Object.selfBuf2+0xC(a4), d1
+         bsr.w   CursorPutChar           | params:
+                                         |     d1: pal | tile num.high
+                                         |     (a0): tile num.low
+         move.l  a0, Object.EffectChild(a4)
+         move.l  #_TextoutCursorRoutine_step4, (a4)
+
+ _TextoutCursorRoutine_step4:
+         subq.w  #1, Object.selfBuf1+6(a4)
+         bpl.w   CallNextMove
+         move.w  Object.speedX(a4), Object.selfBuf1+6(a4)
+         movea.l Object.EffectChild(a4), a0
+         move.b  Object.selfBuf2+0xC(a4), d1
+         addi.b  #0x10, d1
+         bsr.w   CursorPutChar           | change pal
+         adda.w  #1, a0
+         move.l  a0, Object.EffectChild(a4)
+         addi.w  #0x20, Object.FixlayVramTextXDelta(a4)
+         move.l  #_TextoutCursorRoutine_step2, Object(a4)
+         bra.w   CallNextMove
+ | ---------------------------------------------------------------------------
+
+ _TextoutCursorRoutine_newLine:
+         clr.w   Object.selfBuf2+8(a4)
+         clr.w   Object.FixlayVramTextXDelta(a4)
+         addi.w  #0x10, Object.selfBuf2+0xA(a4)
+         addi.w  #2, Object.FixlayVramTextYDelta(a4)
+         adda.w  #1, a0
+         move.l  a0, Object.EffectChild(a4)
+         move.w  Object.selfBuf1+4(a4), Object.selfBuf1(a4)
+         bsr.w   CursorMove
+         move.l  #_TextoutCursorRoutine_step2, (a4)
+         bra.w   CallNextMove
+
+ _TextoutCursorRoutine_textEnd:
+         subi.w  #8, Object.selfBuf2+8(a4)
+         bsr.w   CursorMove
+         movea.l Object.ParentObj(a4), a0
+         addq.b  #1, Object.selfBuf2+0xF(a0)
+         move.b  Object.selfBuf2+0xF(a0), Object.selfBuf2+0xF(a4)
+         move.l  #_TextoutCursorRoutine_waitToDestroy, Object(a4)
+
+ _TextoutCursorRoutine_waitToDestroy:
+         movea.l Object.ParentObj(a4), a0
+         move.b  Object.selfBuf2+0xF(a4), d0
+         cmp.b   Object.selfBuf2+0xF(a0), d0
+         beq.w   CallNextMove
+         jmp     FreeObjBlock            | params:
+ | End of function TextoutCursorRoutine  |     a4: Obj
+
+
+CursorMove:
+        move.w  Object.selfBuf2(a4), d0 | current X
+        add.w   Object.selfBuf2+8(a4), d0 | delta X
+        move.w  d0, Object.OriX(a4)     | 贴图原点(十字)的横坐标, 区域逻辑位置, 像素单位
+        move.w  Object.selfBuf2+2(a4), d0 | current Y
+        add.w   Object.selfBuf2+0xA(a4), d0 | delta Y
+        move.w  d0, Object.OriY(a4)     | 贴图原点(十字)的纵坐标, 区域逻辑高度, 像素单位
+        rts
+| End of function CursorMove
+
+
+| params:
+|     d1: pal | tile num.high
+|     (a0): tile num.low
+
+CursorPutChar:
+        move.w  #0x7002, d0
+        add.w   Object.selfBuf2+4(a4), d0 | X Vram offset
+        add.w   Object.selfBuf2+6(a4), d0 | Y Vram offset
+        add.w   Object.FixlayVramTextXDelta(a4), d0
+        add.w   Object.FixlayVramTextYDelta(a4), d0
+        swap    d0
+        lsl.w   #8, d1
+        move.b  (a0), d1
+        move.w  d1, d0
+        move.l  d0, (0x3C0000).l
+        addi.l  #0x10100, d0
+        move.l  d0, (0x3C0000).l
+        movem.l d0-a6, -(sp)
+        move.w  #0x20, d0
+        jsr     SET_SOUND               | params:
+                                        |     d0: sound index
+        movem.l (sp)+, d0-a6
+        rts
+| End of function CursorPutChar
+
+CallNextMove:
+        jsr     GetNextMov              | ret:
+                                        |     d0: 0, done;
+                                        |        -1, new graph info loaded
+
+String_HOW_TO_PLAY:
+        .word 0x7152
         .byte 0xA4  
         .byte 0x80
         .byte 0x81  
@@ -279,7 +417,7 @@ HELP_BKGRD_LAYER1:
         .long 0x95995600, 0x959A5400, 0x959B5400, 0x959C5400, 0x959D5400| 270
         .long 0x959E5400, 0x959F5400, 0x95A05400, 0x95A15400, 0x95A25400| 275
 HELP_BKGRD_LAYER0:
-		.long 0x95B56300, 0x95B56300, 0x95B56300, 0x95B56300, 0x95B56300| 0
+        .long 0x95B56300, 0x95B56300, 0x95B56300, 0x95B56300, 0x95B56300| 0
         .long 0x95B56300, 0x95B56300, 0x95B56300, 0x95B56300, 0x95B56300| 5
         .long 0x95B56300, 0x95B56300, 0x95B56300, 0x95B56300, 0x95B66300| 10
         .long 0x95B66300, 0x95B66300, 0x95B66300, 0x95B66300, 0x95B66300| 15
@@ -335,3 +473,7 @@ HELP_BKGRD_LAYER0:
         .long 0x95B66501, 0x95B56501, 0x95B56501, 0x95B56501, 0x95B56501| 265
         .long 0x95B56501, 0x95B56501, 0x95B56501, 0x95B56501, 0x95B56501| 270
         .long 0x95B56501, 0x95B56501, 0x95B56501, 0x95B56501, 0x95B56501| 275
+
+aINFORMATION:
+        .ascii "I N F O R M A T I O N"
+        .byte 0xFF
