@@ -4,6 +4,7 @@
 .globl		FreeObjBlock 
 .globl		ZeroObjZbuf
 .globl		CallObjRoutine
+.globl		InsertIntoObjZBuf
 
 InitObjectPool:          |1f24               
                                         
@@ -125,7 +126,7 @@ _ZeroObjZbuf_dbfLoop:                               | CODE XREF: ZeroObjZbuf+18
         move.l  d0, (a0)+
         dbf     d1, _ZeroObjZbuf_dbfLoop
         move.l  #0x108700, A5Seg.pGhostBuf(a5) | 影跳的影子等
-                                        | 指向可用的临时缓冲区用于构造obj头, 每块0x40, 总大小0x200
+                                        | 指向可用的临时缓冲区用于构造obj头, 每块0x40, 总大小0x2000
         move.l  #0xFFFE, A5Seg.FirstObjIndexInZBuf(a5) | 指示第一个带非0的Obj在Zbuf中的偏移, -2 表示Zbuf为空
         clr.w   A5Seg.NumInObjZBuf(a5)
         rts
@@ -207,6 +208,103 @@ _CallObjRoutine_nextLayer:                               | CODE XREF: CallObjRou
         bne.s   _CallObjRoutine_layerLoop
         rts
 | End of function CallObjRoutine
+
+
+| params:
+|     a4: obj
+| ret:
+|     d6: 0, done; -1: fail
+
+InsertIntoObjZBuf:                      | CODE XREF: CallObjRoutine+4Cp
+                                        | DbgOBJRoutineInit+7Aj ...
+        movea.l a4, a3
+        move.w  Object.Z(a4), d5        | bit 0~2: 同一图层中的细比较
+                                        | bit4以上: 在 Zbuf 中的索引
+        bra.s   _InsertIntoObjZBuf_inserIntoZBuf
+| ---------------------------------------------------------------------------
+
+InsertIntoObjZBufGhost:                 | CODE XREF: ROM:00014E34p
+                                        | ROM:00014E5Ep ...
+        move.l  Object.XinScreen(a4), d0
+        move.l  Object.OriX(a4), d1     | 贴图原点(十字)的横坐标, 区域逻辑位置, 像素单位
+        move.l  Object.OriY(a4), d2     | 贴图原点(十字)的纵坐标, 区域逻辑高度, 像素单位
+        move.l  Object.YFromGround(a4), d3 | 起跳时距离地面高度, 像素单位
+        move.l  Object.RoleShrinkRate(a4), d4 | 人物整体比例
+        move.w  Object.Z(a4), d5        | bit 0~2: 同一图层中的细比较
+                                        | bit4以上: 在 Zbuf 中的索引
+        move.w  Object.Palette(a4), d6  | obj 自带 palette, SCB1 第二 word 高字节使用
+        move.l  Object.pGraphDataSubmenuBase(a4), d7 | 此 Obj 的 SCB1 数据的起始地址
+                                        | (调色盘, 解析方法, 宽度, 高度, 数据...)
+        movea.l Object.pGraphInfoEntry(a4), a1 | 先指向4字节Xoffset,Yoffset
+                                        | 然后是一个word的 SCB1 data offset from obj data base
+        movea.l A5Seg.pGhostBuf(a5), a3 | 影跳的影子等
+                                        | 指向可用的临时缓冲区用于构造obj头, 每块0x40, 总大小0x200
+        cmpa.l  #ObjPoolBaseTable, a3
+        ble.s   loc_5CE6
+        moveq   #0xFFFFFFFF, d6         | -1: fail
+        rts
+| ---------------------------------------------------------------------------
+
+loc_5CE6:                               | CODE XREF: InsertIntoObjZBuf+36j
+        st      (a3)                    | 单字节写入 FF
+        addi.w  #0x40, A5Seg.pGhostBuf+2(a5) | set next bufBlock
+        move.l  d0, Object.XinScreen(a3)
+        move.l  d1, Object.OriX(a3)     | 贴图原点(十字)的横坐标, 区域逻辑位置, 像素单位
+        move.l  d2, Object.OriY(a3)     | 贴图原点(十字)的纵坐标, 区域逻辑高度, 像素单位
+        move.l  d3, Object.YFromGround(a3) | 起跳时距离地面高度, 像素单位
+        move.l  d4, Object.RoleShrinkRate(a3) | 人物整体比例
+        move.w  d5, Object.Z(a3)        | bit 0~2: 同一图层中的细比较
+                                        | bit4以上: 在 Zbuf 中的索引
+        move.w  d6, Object.Palette(a3)  | obj 自带 palette, SCB1 第二 word 高字节使用
+        move.l  d7, Object.pGraphDataSubmenuBase(a3) | 此 Obj 的 SCB1 数据的起始地址
+                                        | (调色盘, 解析方法, 宽度, 高度, 数据...)
+        move.l  a1, Object.pGraphInfoEntry(a3) | 先指向4字节Xoffset,Yoffset
+                                        | 然后是一个word的 SCB1 data offset from obj data base
+
+_InsertIntoObjZBuf_inserIntoZBuf:                         | CODE XREF: InsertIntoObjZBuf+6j
+        move.w  a3, d1                  | d5: Z
+                                        | a3: obj (real or delayShadow)
+        lea     A5Seg.ObjZBuf(a5), a0   | size: 0x600
+        move.w  d5, d0
+        andi.w  #0xFF8, d0              | bit 0~2 无用
+        lsr.w   #2, d0                  | 右移3位得到索引, 乘2得到偏移
+
+_InsertIntoObjZBuf_loop:                                  
+        moveq   #0, d2
+        move.w  (a0,d0.w), d2
+        beq.s   _InsertIntoObjZBuf_emptyEntry             | 找到了一个空闲的Zbuf位置
+        movea.l #0x100000, a1
+        adda.l  d2, a1                  | a1: 已经占用了这个Zbuf位置的Obj
+        move.w  Object.Z(a1), d3        | bit 0~2: 同一图层中的细比较
+                                        | bit4以上: 在 Zbuf 中的索引
+        cmp.w   d3, d5
+        bhi.s   loc_5D4A
+        cmp.w   A5Seg.FirstObjIndexInZBuf+2(a5), d0 | 指示第一个带非0的Obj在Zbuf中的偏移, -2 表示Zbuf为空
+        bhi.s   loc_5D42
+        move.w  d0, A5Seg.FirstObjIndexInZBuf+2(a5) | 指示第一个带非0的Obj在Zbuf中的偏移, -2 表示Zbuf为空
+
+loc_5D42:                               | CODE XREF: InsertIntoObjZBuf+92j
+        move.w  d1, (a0,d0.w)           | 安装这个obj, 把原来的obj拿出来, 向后寻找空位置
+        move.w  d2, d1
+        move.w  d3, d4
+
+loc_5D4A:                               | CODE XREF: InsertIntoObjZBuf+8Cj
+        addq.w  #2, d0
+        bra.s   _InsertIntoObjZBuf_loop
+| ---------------------------------------------------------------------------
+
+_InsertIntoObjZBuf_emptyEntry:                            
+        cmp.w   A5Seg.FirstObjIndexInZBuf+2(a5), d0 | 找到了一个空闲的Zbuf位置
+        bhi.s   loc_5D58
+        move.w  d0, A5Seg.FirstObjIndexInZBuf+2(a5) | 指示第一个带非0的Obj在Zbuf中的偏移, -2 表示Zbuf为空
+
+loc_5D58:                               | CODE XREF: InsertIntoObjZBuf+A8j
+        move.w  d1, (a0,d0.w)
+        addq.w  #1, A5Seg.NumInObjZBuf(a5)
+        clr.w   d6
+        rts
+| End of function InsertIntoObjZBuf
+
 
 TASK_OVER:
 		.word 0x7191                  

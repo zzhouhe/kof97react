@@ -29,7 +29,7 @@ PADBYTE = 0xff
 # Object Files and Libraries #
 ##############################
 
-OBJS = $(TMPDIR)/main.o $(TMPDIR)/Palette.o $(TMPDIR)/Sound.o $(TMPDIR)/FixLay.o \
+OBJS = $(TMPDIR)/main.o $(TMPDIR)/math.o $(TMPDIR)/Palette.o $(TMPDIR)/Sound.o $(TMPDIR)/FixLay.o \
 		$(TMPDIR)/Sprites.o $(TMPDIR)/Object.o $(TMPDIR)/Title.o $(TMPDIR)/Backgroud.o \
 		$(TMPDIR)/Help.o $(TMPDIR)/Action.o $(TMPDIR)/20_effect.o
 
