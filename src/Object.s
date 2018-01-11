@@ -5,6 +5,7 @@
 .globl		ZeroObjZbuf
 .globl		CallObjRoutine
 .globl		InsertIntoObjZBuf
+.globl		NotImplemnent
 
 InitObjectPool:          |1f24               
                                         
@@ -86,6 +87,11 @@ _AllocateObjBlock_overflow:
 _AllocateObjBlock_deathLoop:                           
         bra.w   _AllocateObjBlock_deathLoop
 | End of function AllocateObjBlock
+
+NotImplemnent:                              
+        lea     (NOT_IMPLEMENT).l, a0       
+        jsr     SetFixlayText                            
+        bra.w   _AllocateObjBlock_deathLoop
 
 
 | params:
@@ -310,5 +316,11 @@ TASK_OVER:
 		.word 0x7191                  
         .byte  0xF
         .ascii "TASK OVER !!"
+        .byte 0xFF
+
+NOT_IMPLEMENT:
+		.word 0x7191                  
+        .byte  0xF
+        .ascii "NOT IMPLEMENT !!"
         .byte 0xFF
 

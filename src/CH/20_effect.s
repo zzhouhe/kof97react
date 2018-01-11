@@ -192,6 +192,214 @@ EffectRoutine2A:                        | 2a, shake screen 3
         jsr     InitShakeScreen3Obj     
         jmp     FreeObjBlock          
 
+EffectRoutine2B:                        | 2B, adv mode, power max
+        move.w  #0x10, Object.Z(a4)     
+        move.w  #0x20, Object.ChCode(a4)
+        move.w  #0x4B, Object.ActCode(a4)
+        bra.w   EffectRoutineContinueEX
+
+EffectRoutine2C:                        | 2c, land on ground sound
+        movea.l Object.ParentObj(a4), a0 
+        move.w  Object.ChCode(a0), Object.ChCode(a4)
+|        jsr     LoadLandGroundSound     | sound when role land on ground from air
+        jmp     FreeObjBlock            
+
+
+
+EffectRoutine2D:                        | 2d, hit spark with sound (big)
+        move.w  #0x68, d0               
+        movea.l Object.ParentObj(a4), a3
+        btst    #4, Object.RoleStatusFlags(a3)  | bit4: 1, 曝气中
+        beq.s   loc_2B628
+        move.w  #0x69, d0
+        bra.s   loc_2B628
+| ---------------------------------------------------------------------------
+
+EffectRoutine2E:                        | 2e, hit spark with sound
+        move.w  #0x62, d0               
+        movea.l Object.ParentObj(a4), a3
+        btst    #4, Object.RoleStatusFlags(a3) | bit4: 1, 曝气中
+        beq.s   loc_2B628
+        move.w  #0x66, d0
+
+loc_2B628:                              
+        jsr     SET_SOUND               
+        move.b  #1, A5Seg.FlashScreenTypeIndex(a5)
+        move.w  #2, Object.selfBuf2(a4)
+        bra.w   EffectRoutine0          | 0, hit spark
+| ---------------------------------------------------------------------------
+EffectRoutine2F:                        | 2f, hit spark with sound
+        move.w  #0x63, d0               
+        movea.l Object.ParentObj(a4), a3
+        btst    #4, Object.RoleStatusFlags(a3) | bit4: 1, 曝气中
+        beq.s   loc_2B628
+        move.w  #0x67, d0
+        bra.s   loc_2B628
+
+EffectRoutine30:                       | 30, hit spark with sound
+        move.w  #0x62, d0               
+        movea.l Object.ParentObj(a4), a3
+        btst    #4, Object.RoleStatusFlags(a3)| bit4: 1, 曝气中                                      
+        beq.s   loc_2B666
+        move.w  #0x66, d0
+
+loc_2B666:                              
+        jsr     SET_SOUND               
+        move.w  #2, Object.selfBuf2(a4)
+        bra.w   EffectRoutine0          | 0, hit spark
+| ---------------------------------------------------------------------------
+
+EffectRoutine31:                        | 31, hit spark with sound
+        move.w  #0x63, d0               
+        movea.l Object.ParentObj(a4), a3
+        btst    #4, Object.RoleStatusFlags(a3)  | bit4: 1, 曝气中
+        beq.s   loc_2B666
+        move.w  #0x67, d0
+        bra.s   loc_2B666
+| ---------------------------------------------------------------------------
+
+EffectRoutine32:                        | 32, hit spark with sound 
+        move.w  #0x68, d0              
+        movea.l Object.ParentObj(a4), a3
+        btst    #4, Object.RoleStatusFlags(a3)  | bit4: 1, 曝气中
+        beq.s   loc_2B666
+        move.w  #0x69, d0
+        bra.s   loc_2B666
+| ---------------------------------------------------------------------------
+
+EffectRoutine33:               
+EffectRoutine34:
+EffectRoutine35:
+EffectRoutine36:
+EffectRoutine38:
+EffectRoutine39:
+EffectRoutine3A:
+EffectRoutine3C:
+EffectRoutine3D:
+EffectRoutine3E:
+EffectRoutine3F:
+EffectRoutine40:
+EffectRoutine41:
+EffectRoutine42:
+EffectRoutine43:
+EffectRoutine44:
+EffectRoutine45:
+EffectRoutine46:
+EffectRoutine47:
+EffectRoutine48:
+EffectRoutine3A:
+EffectRoutine4A:
+EffectRoutine4B:
+EffectRoutine4D:
+EffectRoutine4E:
+EffectRoutine4F:
+EffectRoutine50:
+EffectRoutine51:
+EffectRoutine52:
+EffectRoutine53:
+EffectRoutine54:
+EffectRoutine58:
+EffectRoutine59:
+EffectRoutine5B:
+EffectRoutine60:
+EffectRoutine61:
+EffectRoutine62:
+EffectRoutine63:
+EffectRoutine64:
+EffectRoutine65:
+EffectRoutine66:
+EffectRoutine67:
+EffectRoutine68:
+EffectRoutine69:
+EffectRoutine6A:
+EffectRoutine6B:
+EffectRoutine6C:
+EffectRoutine6D:
+EffectRoutine6E:
+EffectRoutine6F:
+EffectRoutine70:
+EffectRoutine71:
+EffectRoutine72:
+EffectRoutine73:
+EffectRoutine74:
+EffectRoutine75:
+EffectRoutine76:
+EffectRoutine77:
+EffectRoutine78:
+EffectRoutine79:
+EffectRoutine7A:
+EffectRoutine7B:
+EffectRoutine7C:
+EffectRoutine80:
+EffectRoutine81:
+EffectRoutine82:
+EffectRoutine83:
+EffectRoutine84:
+EffectRoutine85:
+EffectRoutine88:
+EffectRoutine8B:
+EffectRoutine8C:
+EffectRoutine8F:
+EffectRoutine90:
+EffectRoutine91:
+EffectRoutine92:
+EffectRoutine93:
+EffectRoutine94:
+EffectRoutine95:
+EffectRoutine96:
+EffectRoutine97:
+EffectRoutine98:
+EffectRoutine99:
+EffectRoutine9A:
+EffectRoutine9B:
+EffectRoutine9C:
+EffectRoutine9D:
+EffectRoutine9E:
+EffectRoutine9F:
+EffectRoutineA0:
+EffectRoutineA1:
+EffectRoutineA2:
+EffectRoutineA3:
+EffectRoutineA4:
+EffectRoutineA5:
+EffectRoutineA6:
+EffectRoutineA7:
+EffectRoutineA8:
+EffectRoutineA9:
+EffectRoutineAA:
+EffectRoutineAB:
+EffectRoutineAC:
+EffectRoutineAD:
+EffectRoutineAE:
+EffectRoutineAF:
+EffectRoutineB0:
+EffectRoutineB1:
+EffectRoutineB2:
+EffectRoutineB3:
+EffectRoutineB4:
+EffectRoutineB5:
+EffectRoutineB6:
+EffectRoutineB7:
+EffectRoutineB8:
+EffectRoutineB9:
+EffectRoutineBA:
+EffectRoutineBB:
+EffectRoutineBC:
+EffectRoutineBD:
+EffectRoutineBE:
+EffectRoutineBF:
+EffectRoutineC0:
+EffectRoutineC1:
+EffectRoutineC2:
+EffectRoutineC3:
+EffectRoutineC4:
+EffectRoutineC5:
+EffectRoutineC6:
+EffectRoutineC7:
+EffectRoutineC8:
+EffectRoutineC9:
+		jmp		NotImplemnent
+
 EffectRoutineContinueEX:                
         movea.l Object.ParentObj(a4), a3
 
