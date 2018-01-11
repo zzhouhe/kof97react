@@ -3,6 +3,165 @@
 .globl		EffectRoutine3
 .globl		EffectRoutine6
 .globl		EffectRoutine7
+.globl		EffectRoutine8 
+.globl		EffectRoutine9 
+.globl		EffectRoutineA 
+.globl		EffectRoutineF 
+.globl		EffectRoutine10
+.globl		EffectRoutine11
+.globl		EffectRoutine12
+.globl		EffectRoutine17
+.globl		EffectRoutine1A
+.globl		EffectRoutine1D
+.globl		EffectRoutine23
+.globl		EffectRoutine25
+.globl		EffectRoutine26
+.globl		EffectRoutine27
+.globl		EffectRoutine28
+.globl		EffectRoutine29
+.globl		EffectRoutine2A
+.globl		EffectRoutine2B
+.globl		EffectRoutine2C
+.globl		EffectRoutine2D
+.globl		EffectRoutine2E
+.globl		EffectRoutine2F
+.globl		EffectRoutine30
+.globl		EffectRoutine31
+.globl		EffectRoutine32
+.globl		EffectRoutine33               
+.globl		EffectRoutine34
+.globl		EffectRoutine35
+.globl		EffectRoutine36
+.globl		EffectRoutine38
+.globl		EffectRoutine39
+.globl		EffectRoutine3A
+.globl		EffectRoutine3C
+.globl		EffectRoutine3D
+.globl		EffectRoutine3E
+.globl		EffectRoutine3F
+.globl		EffectRoutine40
+.globl		EffectRoutine41
+.globl		EffectRoutine42
+.globl		EffectRoutine43
+.globl		EffectRoutine44
+.globl		EffectRoutine45
+.globl		EffectRoutine46
+.globl		EffectRoutine47
+.globl		EffectRoutine48
+.globl		EffectRoutine3A
+.globl		EffectRoutine4A
+.globl		EffectRoutine4B
+.globl		EffectRoutine4D
+.globl		EffectRoutine4E
+.globl		EffectRoutine4F
+.globl		EffectRoutine50
+.globl		EffectRoutine51
+.globl		EffectRoutine52
+.globl		EffectRoutine53
+.globl		EffectRoutine54
+.globl		EffectRoutine55           
+.globl      EffectRoutine56           
+.globl      EffectRoutine57
+.globl		EffectRoutine58
+.globl		EffectRoutine59
+.globl		EffectRoutine5B
+.globl		EffectRoutine60
+.globl		EffectRoutine61
+.globl		EffectRoutine62
+.globl		EffectRoutine63
+.globl		EffectRoutine64
+.globl		EffectRoutine65
+.globl		EffectRoutine66
+.globl		EffectRoutine67
+.globl		EffectRoutine68
+.globl		EffectRoutine69
+.globl		EffectRoutine6A
+.globl		EffectRoutine6B
+.globl		EffectRoutine6C
+.globl		EffectRoutine6D
+.globl		EffectRoutine6E
+.globl		EffectRoutine6F
+.globl		EffectRoutine70
+.globl		EffectRoutine71
+.globl		EffectRoutine72
+.globl		EffectRoutine73
+.globl		EffectRoutine74
+.globl		EffectRoutine75
+.globl		EffectRoutine76
+.globl		EffectRoutine77
+.globl		EffectRoutine78
+.globl		EffectRoutine79
+.globl		EffectRoutine7A
+.globl		EffectRoutine7B
+.globl		EffectRoutine7C
+.globl		EffectRoutine80
+.globl		EffectRoutine81
+.globl		EffectRoutine82
+.globl		EffectRoutine83
+.globl		EffectRoutine84
+.globl		EffectRoutine85
+.globl		EffectRoutine88
+.globl		EffectRoutine8B
+.globl		EffectRoutine8C
+.globl		EffectRoutine8F
+.globl		EffectRoutine90
+.globl		EffectRoutine91
+.globl		EffectRoutine92
+.globl		EffectRoutine93
+.globl		EffectRoutine94
+.globl		EffectRoutine95
+.globl		EffectRoutine96
+.globl		EffectRoutine97
+.globl		EffectRoutine98
+.globl		EffectRoutine99
+.globl		EffectRoutine9A
+.globl		EffectRoutine9B
+.globl		EffectRoutine9C
+.globl		EffectRoutine9D
+.globl		EffectRoutine9E
+.globl		EffectRoutine9F
+.globl		EffectRoutineA0
+.globl		EffectRoutineA1
+.globl		EffectRoutineA2
+.globl		EffectRoutineA3
+.globl		EffectRoutineA4
+.globl		EffectRoutineA5
+.globl		EffectRoutineA6
+.globl		EffectRoutineA7
+.globl		EffectRoutineA8
+.globl		EffectRoutineA9
+.globl		EffectRoutineAA
+.globl		EffectRoutineAB
+.globl		EffectRoutineAC
+.globl		EffectRoutineAD
+.globl		EffectRoutineAE
+.globl		EffectRoutineAF
+.globl		EffectRoutineB0
+.globl		EffectRoutineB1
+.globl		EffectRoutineB2
+.globl		EffectRoutineB3
+.globl		EffectRoutineB4
+.globl		EffectRoutineB5
+.globl		EffectRoutineB6
+.globl		EffectRoutineB7
+.globl		EffectRoutineB8
+.globl		EffectRoutineB9
+.globl		EffectRoutineBA
+.globl		EffectRoutineBB
+.globl		EffectRoutineBC
+.globl		EffectRoutineBD
+.globl		EffectRoutineBE
+.globl		EffectRoutineBF
+.globl		EffectRoutineC0
+.globl		EffectRoutineC1
+.globl		EffectRoutineC2
+.globl		EffectRoutineC3
+.globl		EffectRoutineC4
+.globl		EffectRoutineC5
+.globl		EffectRoutineC6
+.globl		EffectRoutineC7
+.globl		EffectRoutineC8
+.globl		EffectRoutineC9
 
 EffectRoutine0:                         | 0, hit spark
         move.w  #0x10, Object.Z(a4)     
@@ -135,7 +294,7 @@ EffectRoutine57:                        | 57, on ground 3
         bra.w   EffectRoutineContinueEX
 | ---------------------------------------------------------------------------
 
-EffectRoutine1a:                        | 1a, dust
+EffectRoutine1A:                        | 1a, dust
         move.w  #0x10, Object.Z(a4)     
         move.w  #0x20, Object.ChCode(a4)
         move.w  Object.selfBuf2(a4), d0
@@ -144,7 +303,7 @@ EffectRoutine1a:                        | 1a, dust
         bra.w   EffectRoutineContinueEX
 | ---------------------------------------------------------------------------
 
-EffectRoutine1d:                       | 1d, blood explode
+EffectRoutine1D:                       | 1d, blood explode
         move.w  #0x10, Object.Z(a4)     
         move.w  #0x20, Object.ChCode(a4)
         move.w  Object.selfBuf2(a4), d0
