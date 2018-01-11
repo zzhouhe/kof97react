@@ -221,11 +221,9 @@ _CallObjRoutine_nextLayer:                               | CODE XREF: CallObjRou
 | ret:
 |     d6: 0, done; -1: fail
 
-InsertIntoObjZBuf:                      | CODE XREF: CallObjRoutine+4Cp
-                                        | DbgOBJRoutineInit+7Aj ...
+InsertIntoObjZBuf:                     
         movea.l a4, a3
-        move.w  Object.Z(a4), d5        | bit 0~2: 同一图层中的细比较
-                                        | bit4以上: 在 Zbuf 中的索引
+        move.w  Object.Z(a4), d5        
         bra.s   _InsertIntoObjZBuf_inserIntoZBuf
 | ---------------------------------------------------------------------------
 

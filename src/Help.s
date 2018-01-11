@@ -311,6 +311,7 @@ CallNextMove:
         jsr     GetNextMov              | ret:
                                         |     d0: 0, done;
                                         |        -1, new graph info loaded
+		jmp     InsertIntoObjZBuf
 
 String_HOW_TO_PLAY:
         .word 0x7152

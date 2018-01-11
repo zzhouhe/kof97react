@@ -435,7 +435,7 @@ _mainloop_spinLoop:
         bsr.w   CallObjRoutine
 
         jsr     (ShowPressStartButton).l
-        |jsr     DisplayZbuf             | 把 Zbuf 中的 obj 逐个更新到 VRAM 中
+        jsr     DisplayZbuf             | 把 Zbuf 中的 obj 逐个更新到 VRAM 中
                           
         jsr     ShowCoin
         
