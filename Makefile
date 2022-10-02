@@ -58,6 +58,7 @@ $(TMPDIR)/%.o: src/%.s
 $(TMPDIR)/%.o: src/CH/%.s
 	$(AS) -I$(INCDIR) $(ASFLAGS) $< -o $@
 
+.PHONY:clean
 clean:
 	rm -f $(TMPDIR)/*.*
 
