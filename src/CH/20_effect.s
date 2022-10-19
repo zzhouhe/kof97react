@@ -60,8 +60,8 @@
 .globl		EffectRoutine53
 .globl		EffectRoutine54
 .globl		EffectRoutine55           
-.globl      EffectRoutine56           
-.globl      EffectRoutine57
+.globl		EffectRoutine56           
+.globl		EffectRoutine57
 .globl		EffectRoutine58
 .globl		EffectRoutine59
 .globl		EffectRoutine5B
@@ -168,7 +168,7 @@ EffectRoutine0:                         | 0, hit spark
         move.w  #0x20, Object.ChCode(a4)
         move.w  Object.selfBuf2(a4), Object.ActCode(a4)
         movea.l Object.ParentObj(a4), a3
-        btst    #4, Object.RoleStatusFlags(a3)  | bit4: 1, ÆØÆøÖĞ
+        btst    #4, Object.RoleStatusFlags(a3)  | bit4: 1, æ›æ°”ä¸­
         beq.w   EffectRoutineContinue
         addq.w  #3, Object.ActCode(a4)
         bra.w   EffectRoutineContinue
@@ -225,7 +225,7 @@ EffectRoutine9:                         | 9, big hit spark
         move.w  #0x20, Object.ChCode(a4)
         move.w  #2, Object.ActCode(a4)
         movea.l Object.ParentObj(a4), a3
-        btst    #4, Object.RoleStatusFlags(a3) | bit4: 1, ÆØÆøÖĞ
+        btst    #4, Object.RoleStatusFlags(a3) | bit4: 1, æ›æ°”ä¸­
         beq.w   EffectRoutineContinue
         move.w  #5, Object.ActCode(a4)
         bra.w   EffectRoutineContinue
@@ -368,7 +368,7 @@ EffectRoutine2C:                        | 2c, land on ground sound
 EffectRoutine2D:                        | 2d, hit spark with sound (big)
         move.w  #0x68, d0               
         movea.l Object.ParentObj(a4), a3
-        btst    #4, Object.RoleStatusFlags(a3)  | bit4: 1, ÆØÆøÖĞ
+        btst    #4, Object.RoleStatusFlags(a3)  | bit4: 1, æ›æ°”ä¸­
         beq.s   loc_2B628
         move.w  #0x69, d0
         bra.s   loc_2B628
@@ -377,7 +377,7 @@ EffectRoutine2D:                        | 2d, hit spark with sound (big)
 EffectRoutine2E:                        | 2e, hit spark with sound
         move.w  #0x62, d0               
         movea.l Object.ParentObj(a4), a3
-        btst    #4, Object.RoleStatusFlags(a3) | bit4: 1, ÆØÆøÖĞ
+        btst    #4, Object.RoleStatusFlags(a3) | bit4: 1, æ›æ°”ä¸­
         beq.s   loc_2B628
         move.w  #0x66, d0
 
@@ -390,7 +390,7 @@ loc_2B628:
 EffectRoutine2F:                        | 2f, hit spark with sound
         move.w  #0x63, d0               
         movea.l Object.ParentObj(a4), a3
-        btst    #4, Object.RoleStatusFlags(a3) | bit4: 1, ÆØÆøÖĞ
+        btst    #4, Object.RoleStatusFlags(a3) | bit4: 1, æ›æ°”ä¸­
         beq.s   loc_2B628
         move.w  #0x67, d0
         bra.s   loc_2B628
@@ -398,7 +398,7 @@ EffectRoutine2F:                        | 2f, hit spark with sound
 EffectRoutine30:                       | 30, hit spark with sound
         move.w  #0x62, d0               
         movea.l Object.ParentObj(a4), a3
-        btst    #4, Object.RoleStatusFlags(a3)| bit4: 1, ÆØÆøÖĞ                                      
+        btst    #4, Object.RoleStatusFlags(a3)| bit4: 1, æ›æ°”ä¸­                                      
         beq.s   loc_2B666
         move.w  #0x66, d0
 
@@ -411,7 +411,7 @@ loc_2B666:
 EffectRoutine31:                        | 31, hit spark with sound
         move.w  #0x63, d0               
         movea.l Object.ParentObj(a4), a3
-        btst    #4, Object.RoleStatusFlags(a3)  | bit4: 1, ÆØÆøÖĞ
+        btst    #4, Object.RoleStatusFlags(a3)  | bit4: 1, æ›æ°”ä¸­
         beq.s   loc_2B666
         move.w  #0x67, d0
         bra.s   loc_2B666
@@ -420,7 +420,7 @@ EffectRoutine31:                        | 31, hit spark with sound
 EffectRoutine32:                        | 32, hit spark with sound 
         move.w  #0x68, d0              
         movea.l Object.ParentObj(a4), a3
-        btst    #4, Object.RoleStatusFlags(a3)  | bit4: 1, ÆØÆøÖĞ
+        btst    #4, Object.RoleStatusFlags(a3)  | bit4: 1, æ›æ°”ä¸­
         beq.s   loc_2B666
         move.w  #0x69, d0
         bra.s   loc_2B666
@@ -563,32 +563,32 @@ EffectRoutineContinueEX:
         movea.l Object.ParentObj(a4), a3
 
 EffectRoutineContinue:                 
-        move.w  Object.Z(a3), d0        | bit 0~2: Í¬Ò»Í¼²ãÖĞµÄÏ¸±È½Ï
-                                        | bit4ÒÔÉÏ: ÔÚ Zbuf ÖĞµÄË÷Òı
-        add.w   d0, Object.Z(a4)        | bit 0~2: Í¬Ò»Í¼²ãÖĞµÄÏ¸±È½Ï
-                                        | bit4ÒÔÉÏ: ÔÚ Zbuf ÖĞµÄË÷Òı
+        move.w  Object.Z(a3), d0        | bit 0~2: åŒä¸€å›¾å±‚ä¸­çš„ç»†æ¯”è¾ƒ
+                                        | bit4ä»¥ä¸Š: åœ¨ Zbuf ä¸­çš„ç´¢å¼•
+        add.w   d0, Object.Z(a4)        | bit 0~2: åŒä¸€å›¾å±‚ä¸­çš„ç»†æ¯”è¾ƒ
+                                        | bit4ä»¥ä¸Š: åœ¨ Zbuf ä¸­çš„ç´¢å¼•
         move.b  Object.IsFaceToRight(a3), Object.IsFaceToRight(a4) | bit0: Horizontal flip
                                         | bit1: Vertical flip
                                         | bit2: 2bit Auto-anim
                                         | bit3: 3bit Auto-anim
-                                        | Êµ¼ÊÉÏÊÇSCB1 tile µÚ¶şword µÄµÍ×Ö½ÚÊôĞÔ
-        move.w  Object.OriX(a4), d0     | ÌùÍ¼Ô­µã(Ê®×Ö)µÄºá×ø±ê, ÇøÓòÂß¼­Î»ÖÃ, ÏñËØµ¥Î»
+                                        | å®é™…ä¸Šæ˜¯SCB1 tile ç¬¬äºŒword çš„ä½å­—èŠ‚å±æ€§
+        move.w  Object.OriX(a4), d0     | è´´å›¾åŸç‚¹(åå­—)çš„æ¨ªåæ ‡, åŒºåŸŸé€»è¾‘ä½ç½®, åƒç´ å•ä½
         btst    #0, Object.IsFaceToRight(a3) | bit0: Horizontal flip
                                         | bit1: Vertical flip
                                         | bit2: 2bit Auto-anim
                                         | bit3: 3bit Auto-anim
-                                        | Êµ¼ÊÉÏÊÇSCB1 tile µÚ¶şword µÄµÍ×Ö½ÚÊôĞÔ
+                                        | å®é™…ä¸Šæ˜¯SCB1 tile ç¬¬äºŒword çš„ä½å­—èŠ‚å±æ€§
         beq.s   loc_2B2A6
         neg.w   d0
 
 loc_2B2A6:                              | CODE XREF: EffectRoutine0-A4j
-        add.w   Object.OriX(a3), d0     | ÌùÍ¼Ô­µã(Ê®×Ö)µÄºá×ø±ê, ÇøÓòÂß¼­Î»ÖÃ, ÏñËØµ¥Î»
-        move.w  d0, Object.OriX(a4)     | ÌùÍ¼Ô­µã(Ê®×Ö)µÄºá×ø±ê, ÇøÓòÂß¼­Î»ÖÃ, ÏñËØµ¥Î»
-        move.w  Object.OriY(a3), d0     | ÌùÍ¼Ô­µã(Ê®×Ö)µÄ×İ×ø±ê, ÇøÓòÂß¼­¸ß¶È, ÏñËØµ¥Î»
-        add.w   d0, Object.OriY(a4)     | ÌùÍ¼Ô­µã(Ê®×Ö)µÄ×İ×ø±ê, ÇøÓòÂß¼­¸ß¶È, ÏñËØµ¥Î»
-        move.w  Object.YFromGround(a3), Object.YFromGround(a4) | ÆğÌøÊ±¾àÀëµØÃæ¸ß¶È, ÏñËØµ¥Î»
+        add.w   Object.OriX(a3), d0     | è´´å›¾åŸç‚¹(åå­—)çš„æ¨ªåæ ‡, åŒºåŸŸé€»è¾‘ä½ç½®, åƒç´ å•ä½
+        move.w  d0, Object.OriX(a4)     | è´´å›¾åŸç‚¹(åå­—)çš„æ¨ªåæ ‡, åŒºåŸŸé€»è¾‘ä½ç½®, åƒç´ å•ä½
+        move.w  Object.OriY(a3), d0     | è´´å›¾åŸç‚¹(åå­—)çš„çºµåæ ‡, åŒºåŸŸé€»è¾‘é«˜åº¦, åƒç´ å•ä½
+        add.w   d0, Object.OriY(a4)     | è´´å›¾åŸç‚¹(åå­—)çš„çºµåæ ‡, åŒºåŸŸé€»è¾‘é«˜åº¦, åƒç´ å•ä½
+        move.w  Object.YFromGround(a3), Object.YFromGround(a4) | èµ·è·³æ—¶è·ç¦»åœ°é¢é«˜åº¦, åƒç´ å•ä½
         move.b  #0xFF, Object.PrevActCode(a4)
-        move.w  #0xFFFF, Object.RoleShrinkRate(a4) | ÈËÎïÕûÌå±ÈÀı
+        move.w  #0xFFFF, Object.RoleShrinkRate(a4) | äººç‰©æ•´ä½“æ¯”ä¾‹
 
 SetEffectWait:                         
         move.l  #EffectWait, Object(a4)
@@ -598,9 +598,9 @@ EffectWait:
                                         | bit1: 1, have hit box 1
                                         | bit2: 1, have hit box 2
                                         | bit3: 1, have hit box 3
-                                        | bit4: 1, ÆØÆøĞ§¹û, ÆÆ¿Õ·À
-                                        | bit5: 1, ·ÉĞĞµÀ¾ßµÄ·Ç×îºó1hit
-                                        | bit6: 1, Åö×²·¢Éúºó³ÖĞøÇå³ıbox0(²»²ÎÓëÏÂÒ»Ö¡ºóµÄ¼ì²â)
+                                        | bit4: 1, æ›æ°”æ•ˆæœ, ç ´ç©ºé˜²
+                                        | bit5: 1, é£è¡Œé“å…·çš„éæœ€å1hit
+                                        | bit6: 1, ç¢°æ’å‘ç”ŸåæŒç»­æ¸…é™¤box0(ä¸å‚ä¸ä¸‹ä¸€å¸§åçš„æ£€æµ‹)
                                         | bit7: 1, Act end
         bmi.s   EffectDestroy
         jsr     GetNextMov              | ret:
@@ -623,8 +623,8 @@ InitShakeScreenObj:
         move.w  #0x50FF, d0
         jsr     (AllocateObjBlock).l    
         move.l  a4, Object.ParentObj(a1)
-        move.w  #0xA, Object.selfBuf1(a1) | ³ÖĞøÊ±¼ä
-        move.w  #0xFFFC, Object.selfBuf1+2(a1) | Y¾µÍ·Æ«ÒÆ
+        move.w  #0xA, Object.selfBuf1(a1) | æŒç»­æ—¶é—´
+        move.w  #0xFFFC, Object.selfBuf1+2(a1) | Yé•œå¤´åç§»
         rts
 
 
@@ -650,7 +650,7 @@ InitShakeScreen3Obj:
 ShakeScreenRoutine:                     
         move.l  #_ShakeScreenRoutine_step2, Object(a4)
 |        moveq   #0, d0
-|        move.b  A5Seg.BackgroundId(a5), d0 | ¶ÔÕ½³¡µØÑ¡Ôñ£¬0¡«7
+|        move.b  A5Seg.BackgroundId(a5), d0 | å¯¹æˆ˜åœºåœ°é€‰æ‹©ï¼Œ0ï½7
 |        add.w   d0, d0
 |        add.w   d0, d0
 |        lea     off_2AAA6, a0
@@ -664,13 +664,13 @@ _ShakeScreenRoutine_step2:
         moveq   #0, d1
 
 loc_2AA90:                              
-        move.w  d1, A5Seg.GlobalCamaraYDelta(a5) | È«¾Ö¾µÍ·µÄYÆ«ÒÆ, ÈçµØÕğĞ§¹ûµÈ, neg ±íÊ¾¾µÍ·ÉÏÒÆ
+        move.w  d1, A5Seg.GlobalCamaraYDelta(a5) | å…¨å±€é•œå¤´çš„Yåç§», å¦‚åœ°éœ‡æ•ˆæœç­‰, neg è¡¨ç¤ºé•œå¤´ä¸Šç§»
         subq.w  #1, Object.selfBuf1(a4) | time
         beq.s   _ShakeScreenRoutine_destroy
         rts
 | ---------------------------------------------------------------------------
 
 _ShakeScreenRoutine_destroy:                               
-        clr.w   A5Seg.GlobalCamaraYDelta(a5) | È«¾Ö¾µÍ·µÄYÆ«ÒÆ, ÈçµØÕğĞ§¹ûµÈ, neg ±íÊ¾¾µÍ·ÉÏÒÆ
+        clr.w   A5Seg.GlobalCamaraYDelta(a5) | å…¨å±€é•œå¤´çš„Yåç§», å¦‚åœ°éœ‡æ•ˆæœç­‰, neg è¡¨ç¤ºé•œå¤´ä¸Šç§»
         jmp     FreeObjBlock            | params:
 | End of function ShakeScreenRoutine    |     a4: Obj
