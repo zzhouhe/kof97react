@@ -329,10 +329,10 @@ _notPassToBios:
 loc_9F24:                              
         bsr.w   UpdateSCB2              | updeate shirnk vals
                                       
-        bsr.w   UpdateBackgroundSCB3_4        | Ö»¸üĞÂ SCB3, SCB4 ²¿·Ö
+        bsr.w   UpdateBackgroundSCB3_4        | åªæ›´æ–° SCB3, SCB4 éƒ¨åˆ†
 |        tst.b   A5Seg.InGameHUDFlag(a5) | bit0 & bit1: draw game
 |                                        | bit2:
-|                                        | bit3: 1, ±ØÉ±²»ÉÁÆÁ
+|                                        | bit3: 1, å¿…æ€ä¸é—ªå±
 |                                        | bit4: 1, disable screen scroll
 |                                        | bit7: 0, show HUD (fixed layer)
 |        bmi.s   @toRet
@@ -435,7 +435,7 @@ _mainloop_spinLoop:
         bsr.w   CallObjRoutine
 
         jsr     (ShowPressStartButton).l
-        jsr     DisplayZbuf             | °Ñ Zbuf ÖĞµÄ obj Öğ¸ö¸üĞÂµ½ VRAM ÖĞ
+        jsr     DisplayZbuf             | æŠŠ Zbuf ä¸­çš„ obj é€ä¸ªæ›´æ–°åˆ° VRAM ä¸­
                           
         jsr     ShowCoin
         
@@ -683,11 +683,11 @@ _PLAYER_START_end:
                                         | bit6: 1, mask palette update
                                         | bit7: 1, only update current palette bank
 |        andi.b  #0x2F, A5Seg.VideoSpecialModes(a5) | bit0: 1, not show back obj
-                                        | bit1: 1, ÏÔÊ¾·ÖÊıÅÅÃû
+                                        | bit1: 1, æ˜¾ç¤ºåˆ†æ•°æ’å
                                         | bit2: 1, demo mod
                                         | bit3: 1, not show coin and difficulty
                                         | bit4: 1, role fast speed
-                                        | bit6: 1, 3±¶ÂıËÙ
+                                        | bit6: 1, 3å€æ…¢é€Ÿ
                                         | bit7: 1, not show background
 |        move.w  #0, A5Seg.BackDoorColor(a5)
 |        clr.b   A5Seg.field_2784(a5)
@@ -712,11 +712,11 @@ _PLAYER_START_noStart:
 
 _PLAYER_START_help:                                
 |        andi.b  #0xF1, A5Seg.VideoSpecialModes(a5) | bit0: 1, not show back obj
-                                        | bit1: 1, ÏÔÊ¾·ÖÊıÅÅÃû
+                                        | bit1: 1, æ˜¾ç¤ºåˆ†æ•°æ’å
                                         | bit2: 1, demo mod
                                         | bit3: 1, not show coin and difficulty
                                         | bit4: 1, role fast speed
-                                        | bit6: 1, 3±¶ÂıËÙ
+                                        | bit6: 1, 3å€æ…¢é€Ÿ
                                         | bit7: 1, not show background
 |        clr.w   A5Seg.field_6BE4(a5)
 		 move.w  #0, (0x3C0006).l        | clear auto animation speed
@@ -728,7 +728,7 @@ _PLAYER_START_help:
 |        andi.b  #0xFD, A5Seg.PauseFlag(a5) | bit1: 1, alow pause
                                         | bit3: 1, remap P1 Key A,B,C,D
                                         | bit4: 1, remap P2 Key A,B,C,D
-                                        | bit6: 0, need update by one frame(ÔİÍ£Ê±µÄµ¥Ö¡Ä£Ê½)
+                                        | bit6: 0, need update by one frame(æš‚åœæ—¶çš„å•å¸§æ¨¡å¼)
                                         | bit7: 1, game paused
 |        move.b  #0xFF, A5Seg.field_6C33(a5)
  

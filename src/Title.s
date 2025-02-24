@@ -88,14 +88,14 @@ InitTilesSprites:
 |        clr.w   A5Seg+0x592E(a5)
 |        clr.w   A5Seg+0x5930(a5)
 |        clr.w   A5Seg.field_5932(a5)
-|        clr.l   A5Seg.ScreenLeftX(a5)   | ÏÔÊ¾ÇøÓò×î×ó¶Ëºá×ø±ê, ÏñËØµ¥Î» 0-1C0
-|        clr.l   A5Seg.ScreenTopY(a5)    | ÏñËØµ¥Î», ¸ù¾İ³¡¾°²»Í¬Æğµã²»Í¬
-|                                        | ¶¥²ã±³¾°
+|        clr.l   A5Seg.ScreenLeftX(a5)   | æ˜¾ç¤ºåŒºåŸŸæœ€å·¦ç«¯æ¨ªåæ ‡, åƒç´ å•ä½ 0-1C0
+|        clr.l   A5Seg.ScreenTopY(a5)    | åƒç´ å•ä½, æ ¹æ®åœºæ™¯ä¸åŒèµ·ç‚¹ä¸åŒ
+|                                        | é¡¶å±‚èƒŒæ™¯
 |        move.w  #0xFF00, A5Seg.SomeGlobalHoriShrinking(a5) | always ff00
 |        move.w  #0xFF00, A5Seg.SomeGlobalVertShrinking(a5) | always ff00
-|        clr.l   Object.spACT5(a4)       | ½Ó D2 ´¦, »º³åÇøµÄÓÃÍ¾¸ù¾İ¾ßÌå±ØÉ±¼¼¾ö¶¨
-|        clr.l   Object.spACT5+4(a4)     | ½Ó D2 ´¦, »º³åÇøµÄÓÃÍ¾¸ù¾İ¾ßÌå±ØÉ±¼¼¾ö¶¨
-|        clr.l   Object.spACT5+8(a4)     | ½Ó D2 ´¦, »º³åÇøµÄÓÃÍ¾¸ù¾İ¾ßÌå±ØÉ±¼¼¾ö¶¨
+|        clr.l   Object.spACT5(a4)       | æ¥ D2 å¤„, ç¼“å†²åŒºçš„ç”¨é€”æ ¹æ®å…·ä½“å¿…æ€æŠ€å†³å®š
+|        clr.l   Object.spACT5+4(a4)     | æ¥ D2 å¤„, ç¼“å†²åŒºçš„ç”¨é€”æ ¹æ®å…·ä½“å¿…æ€æŠ€å†³å®š
+|        clr.l   Object.spACT5+8(a4)     | æ¥ D2 å¤„, ç¼“å†²åŒºçš„ç”¨é€”æ ¹æ®å…·ä½“å¿…æ€æŠ€å†³å®š
 |        clr.l   Object.field_CE(a4)
 |        andi.b  #0xFD, A5Seg.PaletteUpdateFlag(a5) | bit0: 0: use bank Index 1; 1: use bank Index 0
 |                                        | bit1: 1, mask flush screen

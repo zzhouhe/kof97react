@@ -9,12 +9,12 @@ FlushUpdatePalette:
       
         lea     A5Seg.PaletteTempQueueStart(a5), a0 | 10c022
         move.w  (a0)+, d0
-        bmi.s   _flush_end                | Îª¸ºÊıÔò×ªÒÆ
+        bmi.s   _flush_end                | ä¸ºè´Ÿæ•°åˆ™è½¬ç§»
 
 _flush_loop:                                  | CODE XREF: FlushUpdatePalette+46j
         lea     (0x400000).l, a1        | Palette base
         lsl.w   #5, d0                  | times 32
-        adda.w  d0, a1                  | ×¢Òâ $402000 Ö®ºóÊÇ¾µÏñ, ÏòÕâÀïĞ´Èë entry ÊÇ¸úÏò $400000 ²¿·ÖĞ´ÈëÃ»Çø±ğ
+        adda.w  d0, a1                  | æ³¨æ„ $402000 ä¹‹åæ˜¯é•œåƒ, å‘è¿™é‡Œå†™å…¥ entry æ˜¯è·Ÿå‘ $400000 éƒ¨åˆ†å†™å…¥æ²¡åŒºåˆ«
         clr.w   (a1)+
         move.w  (a0)+, (a1)+
         move.l  (a0)+, (a1)+
@@ -45,7 +45,7 @@ Append32PaletteToTail:
         lsr.l   #6, d0
         adda.l  d0, a0
         movea.l A5Seg.PAL_IN_POINT(a5), a1
-        move.w  #0x1F, d0               | 0x20 ¸ö Palette
+        move.w  #0x1F, d0               | 0x20 ä¸ª Palette
 
 _pal_append:                               
         move.l  (a0)+, (a1)+

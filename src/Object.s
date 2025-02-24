@@ -44,24 +44,24 @@ AllocateObjBlock:                       |1f82
         bmi.w   _AllocateObjBlock_overflow               | if (curIndex > 0x7F)
                                         |     goto ...overflow
         subq.w  #2, A5Seg.ObjPoolStackIndex(a5) | curIndex -= 2
-                                        | ×¢Òâ´ËÊ± d7 Ã»ÓĞ±ä
+                                        | æ³¨æ„æ­¤æ—¶ d7 æ²¡æœ‰å˜
         lea     A5Seg.SpritePoolBaseTable(a5), a1 | 10a700
         movea.w (a1,d7.w), a1
         adda.l  #0x100000, a1
         move.l  a0, Object(a1)
-        move.w  d0, Object.Level(a1)    | ÊıÖµÔ½Ğ¡, ´¦Àí³ÌĞòÔ½ÏÈ±»Ö´ĞĞ (ÓÅÏÈ¼¶Ô½¸ß).
-                                        | Ò²ÓÃÓÚÅĞ¶ÏÊÇ·ñ¶³½á»­Ãæ
-        lea     -0x7F00(a5), a0         | 100100 Á´±íÍ·
+        move.w  d0, Object.Level(a1)    | æ•°å€¼è¶Šå°, å¤„ç†ç¨‹åºè¶Šå…ˆè¢«æ‰§è¡Œ (ä¼˜å…ˆçº§è¶Šé«˜).
+                                        | ä¹Ÿç”¨äºåˆ¤æ–­æ˜¯å¦å†»ç»“ç”»é¢
+        lea     -0x7F00(a5), a0         | 100100 é“¾è¡¨å¤´
         move.l  a0, d7
 
 _AllocateObjBlock_findPosition:                          | CODE XREF: AllocateObjBlock+30j
         move.w  Object.PNext(a0), d7
         movea.l d7, a0                  | a0 = 100000 + *(a0+4)
-        cmp.w   Object.Level(a0), d0    | ÊıÖµÔ½Ğ¡, ´¦Àí³ÌĞòÔ½ÏÈ±»Ö´ĞĞ (ÓÅÏÈ¼¶Ô½¸ß).
-                                        | Ò²ÓÃÓÚÅĞ¶ÏÊÇ·ñ¶³½á»­Ãæ
+        cmp.w   Object.Level(a0), d0    | æ•°å€¼è¶Šå°, å¤„ç†ç¨‹åºè¶Šå…ˆè¢«æ‰§è¡Œ (ä¼˜å…ˆçº§è¶Šé«˜).
+                                        | ä¹Ÿç”¨äºåˆ¤æ–­æ˜¯å¦å†»ç»“ç”»é¢
         bcc.s   _AllocateObjBlock_findPosition           | if(8(a0)<=d0) goto
-        move.w  a0, Object.PNext(a1)    | ÕÒµ½ÁËÒ»¸ö level ×ã¹»´óµÄ¿é
-                                        | °ÑÔ­À´µÄ¿é°´ÕÕlevelË³Ğò²å½øÁ´±í
+        move.w  a0, Object.PNext(a1)    | æ‰¾åˆ°äº†ä¸€ä¸ª level è¶³å¤Ÿå¤§çš„å—
+                                        | æŠŠåŸæ¥çš„å—æŒ‰ç…§levelé¡ºåºæ’è¿›é“¾è¡¨
         move.w  Object.PPrev(a0), Object.PPrev(a1)
         move.w  Object.PPrev(a0), d7
         move.w  a1, Object.PPrev(a0)
@@ -75,7 +75,7 @@ _AllocateObjBlock_zeroLoop:
         move.l  d7, (a0)+
         move.l  d7, (a0)+
         move.l  d7, (a0)+
-        dbf     d0, _AllocateObjBlock_zeroLoop           | ÇåÁã 0x1f0
+        dbf     d0, _AllocateObjBlock_zeroLoop           | æ¸…é›¶ 0x1f0
         rts
 | ---------------------------------------------------------------------------
 
@@ -103,15 +103,15 @@ FreeObjBlock:
         addq.w  #2, A5Seg.ObjPoolStackIndex(a5)
         moveq   #0, d0
         move.w  A5Seg.ObjPoolStackIndex(a5), d0
-        move.w  a4, (a0,d0.w)           | ÊÍ·Åµ±Ç°µÄ200_Block
+        move.w  a4, (a0,d0.w)           | é‡Šæ”¾å½“å‰çš„200_Block
         move.l  #0x100000, d0
-        move.w  Object.PPrev(a4), d0    | ½«´ËBlock´ÓÁ´±íÖĞ¶Ï¿ª
+        move.w  Object.PPrev(a4), d0    | å°†æ­¤Blockä»é“¾è¡¨ä¸­æ–­å¼€
         movea.l d0, a0
         move.w  Object.PNext(a4), Object.PNext(a0)
         move.w  Object.PNext(a4), d0
         movea.l d0, a0
         move.w  Object.PPrev(a4), Object.PPrev(a0)
-        move.w  #0xFFFF, Object.PPrev(a4) | Ç°Ò»¸ö½ÚµãÎª¿Õ, ±íÊ¾²»´¦ÔÚÔËĞĞÁ´ÖĞ
+        move.w  #0xFFFF, Object.PPrev(a4) | å‰ä¸€ä¸ªèŠ‚ç‚¹ä¸ºç©º, è¡¨ç¤ºä¸å¤„åœ¨è¿è¡Œé“¾ä¸­
         rts
 | End of function FreeObjBlock
 
@@ -131,9 +131,9 @@ _ZeroObjZbuf_dbfLoop:                               | CODE XREF: ZeroObjZbuf+18
         move.l  d0, (a0)+
         move.l  d0, (a0)+
         dbf     d1, _ZeroObjZbuf_dbfLoop
-        move.l  #0x108700, A5Seg.pGhostBuf(a5) | Ó°ÌøµÄÓ°×ÓµÈ
-                                        | Ö¸Ïò¿ÉÓÃµÄÁÙÊ±»º³åÇøÓÃÓÚ¹¹ÔìobjÍ·, Ã¿¿é0x40, ×Ü´óĞ¡0x2000
-        move.l  #0xFFFE, A5Seg.FirstObjIndexInZBuf(a5) | Ö¸Ê¾µÚÒ»¸ö´ø·Ç0µÄObjÔÚZbufÖĞµÄÆ«ÒÆ, -2 ±íÊ¾ZbufÎª¿Õ
+        move.l  #0x108700, A5Seg.pGhostBuf(a5) | å½±è·³çš„å½±å­ç­‰
+                                        | æŒ‡å‘å¯ç”¨çš„ä¸´æ—¶ç¼“å†²åŒºç”¨äºæ„é€ objå¤´, æ¯å—0x40, æ€»å¤§å°0x2000
+        move.l  #0xFFFE, A5Seg.FirstObjIndexInZBuf(a5) | æŒ‡ç¤ºç¬¬ä¸€ä¸ªå¸¦é0çš„Objåœ¨Zbufä¸­çš„åç§», -2 è¡¨ç¤ºZbufä¸ºç©º
         clr.w   A5Seg.NumInObjZBuf(a5)
         rts
 | End of function ZeroObjZbuf
@@ -147,16 +147,16 @@ CallObjRoutine:
         move.l  #OBJ_LIST_HEAD, d7
 |        btst    #2, A5Seg.RoleObjMaskFlags(a5) | bit0: 1, lock p1
 |                                        | bit1: 1, lock p2
-|                                        | bit2: 1, freeze mode, ±ØÉ±»­Ãæ
+|                                        | bit2: 1, freeze mode, å¿…æ€ç”»é¢
 |        beq.s   _CallObjRoutine_normalLoop
 |
 |_CallObjRoutine_freezeLoop:                            | CODE XREF: CallObjRoutine+32j
 |        movea.l d7, a4                  | set a4 = next obj
-|        move.w  Object.Level(a4), d7    | ÓÃÓÚÅĞ¶ÏÊÇ·ñ¶³½á»­Ãæ
-|        cmp.w   A5Seg.unfreezeLevelNum(a5), d7 | ²»¶³½áµÄlevel±àºÅ
+|        move.w  Object.Level(a4), d7    | ç”¨äºåˆ¤æ–­æ˜¯å¦å†»ç»“ç”»é¢
+|        cmp.w   A5Seg.unfreezeLevelNum(a5), d7 | ä¸å†»ç»“çš„levelç¼–å·
 |        bne.w   _CallObjRoutine_unfreezeObj
 |        movea.l Object(a4), a0
-|        jsr     (a0)                    | ¶³½áµÄÊ±ºòÈÔÈ»»áÖ´ĞĞobj´¦ÀíÀı³Ì
+|        jsr     (a0)                    | å†»ç»“çš„æ—¶å€™ä»ç„¶ä¼šæ‰§è¡Œobjå¤„ç†ä¾‹ç¨‹
 |
 |_CallObjRoutine_goNextLoop:                            | CODE XREF: CallObjRoutine+3Ej
 |                                        | CallObjRoutine+52j
@@ -169,9 +169,9 @@ CallObjRoutine:
 |_CallObjRoutine_unfreezeObj:                           | CODE XREF: CallObjRoutine+24j
 |        btst    #5, Object.ExGraphFlags(a4) | bit0: 1, need to update SCB1
 |                                        | bit1: 1, do not use extra graph
-|                                        | bit2: 1, Ê¹ÓÃ»ºÒÆ²ã±³¾°
+|                                        | bit2: 1, ä½¿ç”¨ç¼“ç§»å±‚èƒŒæ™¯
 |                                        | bit3: ?
-|                                        | bit4: 1, use own Shrinking, do not set InScreenX,Y µ¹Ó°ÓÃ
+|                                        | bit4: 1, use own Shrinking, do not set InScreenX,Y å€’å½±ç”¨
 |                                        | bit5: 1, visible during freeze
 |                                        | bit7: 1, use sub SCB3 buf
 |        beq.s   _CallObjRoutine_goNextLoop
@@ -192,7 +192,7 @@ _CallObjRoutine_normalLoop:
         jsr     (a0)
         move.l  a4, d7
         move.w  Object.PNext(a4), d7
-        bpl.s   _CallObjRoutine_normalLoop             | Ñ­»·Ö´ĞĞÃ¿¸öobjµÄ´¦ÀíÀı³Ì
+        bpl.s   _CallObjRoutine_normalLoop             | å¾ªç¯æ‰§è¡Œæ¯ä¸ªobjçš„å¤„ç†ä¾‹ç¨‹
 
 		lea     (0x10B0B2).l, a4      | BackGroundObjLayer0
         move.b  #8, A5Seg.PendingNumOfBackgroundLayerToUpdate(a5)
@@ -204,8 +204,8 @@ _CallObjRoutine_layerLoop:                             | CODE XREF: CallObjRouti
                                         | bit5: 1, do not ... ?
                                         | bit6: 1, sticky
                                         | bit7: 0, do not use layer proc
-        bpl.s   _CallObjRoutine_nextLayer                | ÓÎÏ·ÖĞÊµ¼ÊÖ»ÊÇÓÃ3²ã±³¾°
-        movea.l ScreenObj(a4), a0       | Ö÷Àı³Ì
+        bpl.s   _CallObjRoutine_nextLayer                | æ¸¸æˆä¸­å®é™…åªæ˜¯ç”¨3å±‚èƒŒæ™¯
+        movea.l ScreenObj(a4), a0       | ä¸»ä¾‹ç¨‹
         jsr     (a0)
 
 _CallObjRoutine_nextLayer:                               | CODE XREF: CallObjRoutine+94j
@@ -230,19 +230,19 @@ InsertIntoObjZBuf:
 InsertIntoObjZBufGhost:                 | CODE XREF: ROM:00014E34p
                                         | ROM:00014E5Ep ...
         move.l  Object.XinScreen(a4), d0
-        move.l  Object.OriX(a4), d1     | ÌùÍ¼Ô­µã(Ê®×Ö)µÄºá×ø±ê, ÇøÓòÂß¼­Î»ÖÃ, ÏñËØµ¥Î»
-        move.l  Object.OriY(a4), d2     | ÌùÍ¼Ô­µã(Ê®×Ö)µÄ×İ×ø±ê, ÇøÓòÂß¼­¸ß¶È, ÏñËØµ¥Î»
-        move.l  Object.YFromGround(a4), d3 | ÆğÌøÊ±¾àÀëµØÃæ¸ß¶È, ÏñËØµ¥Î»
-        move.l  Object.RoleShrinkRate(a4), d4 | ÈËÎïÕûÌå±ÈÀı
-        move.w  Object.Z(a4), d5        | bit 0~2: Í¬Ò»Í¼²ãÖĞµÄÏ¸±È½Ï
-                                        | bit4ÒÔÉÏ: ÔÚ Zbuf ÖĞµÄË÷Òı
-        move.w  Object.Palette(a4), d6  | obj ×Ô´ø palette, SCB1 µÚ¶ş word ¸ß×Ö½ÚÊ¹ÓÃ
-        move.l  Object.pGraphDataSubmenuBase(a4), d7 | ´Ë Obj µÄ SCB1 Êı¾İµÄÆğÊ¼µØÖ·
-                                        | (µ÷É«ÅÌ, ½âÎö·½·¨, ¿í¶È, ¸ß¶È, Êı¾İ...)
-        movea.l Object.pGraphInfoEntry(a4), a1 | ÏÈÖ¸Ïò4×Ö½ÚXoffset,Yoffset
-                                        | È»ºóÊÇÒ»¸öwordµÄ SCB1 data offset from obj data base
-        movea.l A5Seg.pGhostBuf(a5), a3 | Ó°ÌøµÄÓ°×ÓµÈ
-                                        | Ö¸Ïò¿ÉÓÃµÄÁÙÊ±»º³åÇøÓÃÓÚ¹¹ÔìobjÍ·, Ã¿¿é0x40, ×Ü´óĞ¡0x200
+        move.l  Object.OriX(a4), d1     | è´´å›¾åŸç‚¹(åå­—)çš„æ¨ªåæ ‡, åŒºåŸŸé€»è¾‘ä½ç½®, åƒç´ å•ä½
+        move.l  Object.OriY(a4), d2     | è´´å›¾åŸç‚¹(åå­—)çš„çºµåæ ‡, åŒºåŸŸé€»è¾‘é«˜åº¦, åƒç´ å•ä½
+        move.l  Object.YFromGround(a4), d3 | èµ·è·³æ—¶è·ç¦»åœ°é¢é«˜åº¦, åƒç´ å•ä½
+        move.l  Object.RoleShrinkRate(a4), d4 | äººç‰©æ•´ä½“æ¯”ä¾‹
+        move.w  Object.Z(a4), d5        | bit 0~2: åŒä¸€å›¾å±‚ä¸­çš„ç»†æ¯”è¾ƒ
+                                        | bit4ä»¥ä¸Š: åœ¨ Zbuf ä¸­çš„ç´¢å¼•
+        move.w  Object.Palette(a4), d6  | obj è‡ªå¸¦ palette, SCB1 ç¬¬äºŒ word é«˜å­—èŠ‚ä½¿ç”¨
+        move.l  Object.pGraphDataSubmenuBase(a4), d7 | æ­¤ Obj çš„ SCB1 æ•°æ®çš„èµ·å§‹åœ°å€
+                                        | (è°ƒè‰²ç›˜, è§£ææ–¹æ³•, å®½åº¦, é«˜åº¦, æ•°æ®...)
+        movea.l Object.pGraphInfoEntry(a4), a1 | å…ˆæŒ‡å‘4å­—èŠ‚Xoffset,Yoffset
+                                        | ç„¶åæ˜¯ä¸€ä¸ªwordçš„ SCB1 data offset from obj data base
+        movea.l A5Seg.pGhostBuf(a5), a3 | å½±è·³çš„å½±å­ç­‰
+                                        | æŒ‡å‘å¯ç”¨çš„ä¸´æ—¶ç¼“å†²åŒºç”¨äºæ„é€ objå¤´, æ¯å—0x40, æ€»å¤§å°0x200
         cmpa.l  #ObjPoolBaseTable, a3
         ble.s   loc_5CE6
         moveq   #0xFFFFFFFF, d6         | -1: fail
@@ -250,45 +250,45 @@ InsertIntoObjZBufGhost:                 | CODE XREF: ROM:00014E34p
 | ---------------------------------------------------------------------------
 
 loc_5CE6:                               | CODE XREF: InsertIntoObjZBuf+36j
-        st      (a3)                    | µ¥×Ö½ÚĞ´Èë FF
+        st      (a3)                    | å•å­—èŠ‚å†™å…¥ FF
         addi.w  #0x40, A5Seg.pGhostBuf+2(a5) | set next bufBlock
         move.l  d0, Object.XinScreen(a3)
-        move.l  d1, Object.OriX(a3)     | ÌùÍ¼Ô­µã(Ê®×Ö)µÄºá×ø±ê, ÇøÓòÂß¼­Î»ÖÃ, ÏñËØµ¥Î»
-        move.l  d2, Object.OriY(a3)     | ÌùÍ¼Ô­µã(Ê®×Ö)µÄ×İ×ø±ê, ÇøÓòÂß¼­¸ß¶È, ÏñËØµ¥Î»
-        move.l  d3, Object.YFromGround(a3) | ÆğÌøÊ±¾àÀëµØÃæ¸ß¶È, ÏñËØµ¥Î»
-        move.l  d4, Object.RoleShrinkRate(a3) | ÈËÎïÕûÌå±ÈÀı
-        move.w  d5, Object.Z(a3)        | bit 0~2: Í¬Ò»Í¼²ãÖĞµÄÏ¸±È½Ï
-                                        | bit4ÒÔÉÏ: ÔÚ Zbuf ÖĞµÄË÷Òı
-        move.w  d6, Object.Palette(a3)  | obj ×Ô´ø palette, SCB1 µÚ¶ş word ¸ß×Ö½ÚÊ¹ÓÃ
-        move.l  d7, Object.pGraphDataSubmenuBase(a3) | ´Ë Obj µÄ SCB1 Êı¾İµÄÆğÊ¼µØÖ·
-                                        | (µ÷É«ÅÌ, ½âÎö·½·¨, ¿í¶È, ¸ß¶È, Êı¾İ...)
-        move.l  a1, Object.pGraphInfoEntry(a3) | ÏÈÖ¸Ïò4×Ö½ÚXoffset,Yoffset
-                                        | È»ºóÊÇÒ»¸öwordµÄ SCB1 data offset from obj data base
+        move.l  d1, Object.OriX(a3)     | è´´å›¾åŸç‚¹(åå­—)çš„æ¨ªåæ ‡, åŒºåŸŸé€»è¾‘ä½ç½®, åƒç´ å•ä½
+        move.l  d2, Object.OriY(a3)     | è´´å›¾åŸç‚¹(åå­—)çš„çºµåæ ‡, åŒºåŸŸé€»è¾‘é«˜åº¦, åƒç´ å•ä½
+        move.l  d3, Object.YFromGround(a3) | èµ·è·³æ—¶è·ç¦»åœ°é¢é«˜åº¦, åƒç´ å•ä½
+        move.l  d4, Object.RoleShrinkRate(a3) | äººç‰©æ•´ä½“æ¯”ä¾‹
+        move.w  d5, Object.Z(a3)        | bit 0~2: åŒä¸€å›¾å±‚ä¸­çš„ç»†æ¯”è¾ƒ
+                                        | bit4ä»¥ä¸Š: åœ¨ Zbuf ä¸­çš„ç´¢å¼•
+        move.w  d6, Object.Palette(a3)  | obj è‡ªå¸¦ palette, SCB1 ç¬¬äºŒ word é«˜å­—èŠ‚ä½¿ç”¨
+        move.l  d7, Object.pGraphDataSubmenuBase(a3) | æ­¤ Obj çš„ SCB1 æ•°æ®çš„èµ·å§‹åœ°å€
+                                        | (è°ƒè‰²ç›˜, è§£ææ–¹æ³•, å®½åº¦, é«˜åº¦, æ•°æ®...)
+        move.l  a1, Object.pGraphInfoEntry(a3) | å…ˆæŒ‡å‘4å­—èŠ‚Xoffset,Yoffset
+                                        | ç„¶åæ˜¯ä¸€ä¸ªwordçš„ SCB1 data offset from obj data base
 
 _InsertIntoObjZBuf_inserIntoZBuf:                         | CODE XREF: InsertIntoObjZBuf+6j
         move.w  a3, d1                  | d5: Z
                                         | a3: obj (real or delayShadow)
         lea     A5Seg.ObjZBuf(a5), a0   | size: 0x600
         move.w  d5, d0
-        andi.w  #0xFF8, d0              | bit 0~2 ÎŞÓÃ
-        lsr.w   #2, d0                  | ÓÒÒÆ3Î»µÃµ½Ë÷Òı, ³Ë2µÃµ½Æ«ÒÆ
+        andi.w  #0xFF8, d0              | bit 0~2 æ— ç”¨
+        lsr.w   #2, d0                  | å³ç§»3ä½å¾—åˆ°ç´¢å¼•, ä¹˜2å¾—åˆ°åç§»
 
 _InsertIntoObjZBuf_loop:                                  
         moveq   #0, d2
         move.w  (a0,d0.w), d2
-        beq.s   _InsertIntoObjZBuf_emptyEntry             | ÕÒµ½ÁËÒ»¸ö¿ÕÏĞµÄZbufÎ»ÖÃ
+        beq.s   _InsertIntoObjZBuf_emptyEntry             | æ‰¾åˆ°äº†ä¸€ä¸ªç©ºé—²çš„Zbufä½ç½®
         movea.l #0x100000, a1
-        adda.l  d2, a1                  | a1: ÒÑ¾­Õ¼ÓÃÁËÕâ¸öZbufÎ»ÖÃµÄObj
-        move.w  Object.Z(a1), d3        | bit 0~2: Í¬Ò»Í¼²ãÖĞµÄÏ¸±È½Ï
-                                        | bit4ÒÔÉÏ: ÔÚ Zbuf ÖĞµÄË÷Òı
+        adda.l  d2, a1                  | a1: å·²ç»å ç”¨äº†è¿™ä¸ªZbufä½ç½®çš„Obj
+        move.w  Object.Z(a1), d3        | bit 0~2: åŒä¸€å›¾å±‚ä¸­çš„ç»†æ¯”è¾ƒ
+                                        | bit4ä»¥ä¸Š: åœ¨ Zbuf ä¸­çš„ç´¢å¼•
         cmp.w   d3, d5
         bhi.s   loc_5D4A
-        cmp.w   A5Seg.FirstObjIndexInZBuf+2(a5), d0 | Ö¸Ê¾µÚÒ»¸ö´ø·Ç0µÄObjÔÚZbufÖĞµÄÆ«ÒÆ, -2 ±íÊ¾ZbufÎª¿Õ
+        cmp.w   A5Seg.FirstObjIndexInZBuf+2(a5), d0 | æŒ‡ç¤ºç¬¬ä¸€ä¸ªå¸¦é0çš„Objåœ¨Zbufä¸­çš„åç§», -2 è¡¨ç¤ºZbufä¸ºç©º
         bhi.s   loc_5D42
-        move.w  d0, A5Seg.FirstObjIndexInZBuf+2(a5) | Ö¸Ê¾µÚÒ»¸ö´ø·Ç0µÄObjÔÚZbufÖĞµÄÆ«ÒÆ, -2 ±íÊ¾ZbufÎª¿Õ
+        move.w  d0, A5Seg.FirstObjIndexInZBuf+2(a5) | æŒ‡ç¤ºç¬¬ä¸€ä¸ªå¸¦é0çš„Objåœ¨Zbufä¸­çš„åç§», -2 è¡¨ç¤ºZbufä¸ºç©º
 
 loc_5D42:                               | CODE XREF: InsertIntoObjZBuf+92j
-        move.w  d1, (a0,d0.w)           | °²×°Õâ¸öobj, °ÑÔ­À´µÄobjÄÃ³öÀ´, ÏòºóÑ°ÕÒ¿ÕÎ»ÖÃ
+        move.w  d1, (a0,d0.w)           | å®‰è£…è¿™ä¸ªobj, æŠŠåŸæ¥çš„objæ‹¿å‡ºæ¥, å‘åå¯»æ‰¾ç©ºä½ç½®
         move.w  d2, d1
         move.w  d3, d4
 
@@ -298,9 +298,9 @@ loc_5D4A:                               | CODE XREF: InsertIntoObjZBuf+8Cj
 | ---------------------------------------------------------------------------
 
 _InsertIntoObjZBuf_emptyEntry:                            
-        cmp.w   A5Seg.FirstObjIndexInZBuf+2(a5), d0 | ÕÒµ½ÁËÒ»¸ö¿ÕÏĞµÄZbufÎ»ÖÃ
+        cmp.w   A5Seg.FirstObjIndexInZBuf+2(a5), d0 | æ‰¾åˆ°äº†ä¸€ä¸ªç©ºé—²çš„Zbufä½ç½®
         bhi.s   loc_5D58
-        move.w  d0, A5Seg.FirstObjIndexInZBuf+2(a5) | Ö¸Ê¾µÚÒ»¸ö´ø·Ç0µÄObjÔÚZbufÖĞµÄÆ«ÒÆ, -2 ±íÊ¾ZbufÎª¿Õ
+        move.w  d0, A5Seg.FirstObjIndexInZBuf+2(a5) | æŒ‡ç¤ºç¬¬ä¸€ä¸ªå¸¦é0çš„Objåœ¨Zbufä¸­çš„åç§», -2 è¡¨ç¤ºZbufä¸ºç©º
 
 loc_5D58:                               | CODE XREF: InsertIntoObjZBuf+A8j
         move.w  d1, (a0,d0.w)

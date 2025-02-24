@@ -88,17 +88,17 @@ _HelpRoutine_step4:
 
 HelpInit:                               
         
-        clr.l   A5Seg.ScreenLeftX(a5)   | ÏÔÊ¾ÇøÓò×î×ó¶Ëºá×ø±ê, ÏñËØµ¥Î» 0-1C0
-        clr.l   A5Seg.ScreenTopY(a5)    | ÏñËØµ¥Î», ¸ù¾İ³¡¾°²»Í¬Æğµã²»Í¬
-                                        | ¶¥²ã±³¾°
+        clr.l   A5Seg.ScreenLeftX(a5)   | æ˜¾ç¤ºåŒºåŸŸæœ€å·¦ç«¯æ¨ªåæ ‡, åƒç´ å•ä½ 0-1C0
+        clr.l   A5Seg.ScreenTopY(a5)    | åƒç´ å•ä½, æ ¹æ®åœºæ™¯ä¸åŒèµ·ç‚¹ä¸åŒ
+                                        | é¡¶å±‚èƒŒæ™¯
         jsr     SetBackgroundNoUse
 |        clr.b   A5Seg.PersonSelBlock1(a5) | if at sel mode, set this byte to 1
 |        clr.b   A5Seg.PersonSelBlock2(a5)
-|        move.b  #0, A5Seg.SelectedP1PID(a5) | Ñ¡ÈË±í
+|        move.b  #0, A5Seg.SelectedP1PID(a5) | é€‰äººè¡¨
 |        move.b  #8, A5Seg.SelectedP2PID(a5)
-|        clr.b   A5Seg.ColorFlags1(a5)   | Ñ¡ÈËÊ±¾ö¶¨µÄÑÕÉ«, Ö÷ÑÕÉ«0, ¸±ÑÕÉ«1
-|        clr.b   A5Seg.ColorFlags1+1(a5) | Ñ¡ÈËÊ±¾ö¶¨µÄÑÕÉ«, Ö÷ÑÕÉ«0, ¸±ÑÕÉ«1
-|        clr.b   A5Seg.ColorFlags1+2(a5) | Ñ¡ÈËÊ±¾ö¶¨µÄÑÕÉ«, Ö÷ÑÕÉ«0, ¸±ÑÕÉ«1
+|        clr.b   A5Seg.ColorFlags1(a5)   | é€‰äººæ—¶å†³å®šçš„é¢œè‰², ä¸»é¢œè‰²0, å‰¯é¢œè‰²1
+|        clr.b   A5Seg.ColorFlags1+1(a5) | é€‰äººæ—¶å†³å®šçš„é¢œè‰², ä¸»é¢œè‰²0, å‰¯é¢œè‰²1
+|        clr.b   A5Seg.ColorFlags1+2(a5) | é€‰äººæ—¶å†³å®šçš„é¢œè‰², ä¸»é¢œè‰²0, å‰¯é¢œè‰²1
 |        clr.b   A5Seg.ColorFlags2(a5)
 |        clr.b   A5Seg.ColorFlags2+1(a5)
 |        clr.b   A5Seg.ColorFlags2+2(a5)
@@ -141,9 +141,9 @@ HelpInitDataForSprites:
 |        jsr     LoadPalDoubleArrayEntries | params:
                                         |     a0: ptr to idx in rom
                                         |     a1: ptr to des idx
-        clr.l   A5Seg.ScreenLeftX(a5)   | ÏÔÊ¾ÇøÓò×î×ó¶Ëºá×ø±ê, ÏñËØµ¥Î» 0-1C0
-        clr.l   A5Seg.ScreenTopY(a5)    | ÏñËØµ¥Î», ¸ù¾İ³¡¾°²»Í¬Æğµã²»Í¬
-                                        | ¶¥²ã±³¾°
+        clr.l   A5Seg.ScreenLeftX(a5)   | æ˜¾ç¤ºåŒºåŸŸæœ€å·¦ç«¯æ¨ªåæ ‡, åƒç´ å•ä½ 0-1C0
+        clr.l   A5Seg.ScreenTopY(a5)    | åƒç´ å•ä½, æ ¹æ®åœºæ™¯ä¸åŒèµ·ç‚¹ä¸åŒ
+                                        | é¡¶å±‚èƒŒæ™¯
 |        move.w  #0xFF00, A5Seg.SomeGlobalHoriShrinking(a5) | always ff00
 |        move.w  #0xFF00, A5Seg.SomeGlobalVertShrinking(a5) | always ff00
 |        andi.b  #0xFD, A5Seg.PaletteUpdateFlag(a5) | bit0: 0: use bank Index 1; 1: use bank Index 0
@@ -191,9 +191,9 @@ _InitFixlayHowToPlay_destroy:
 
 
  TextoutCursorRoutine:
-         move.w  #0xFFFF, Object.RoleShrinkRate(a4) | ÈËÎïÕûÌå±ÈÀı
-         move.w  #0xFFFF, Object.Z(a4)   | bit 0~2: Í¬Ò»Í¼²ãÖĞµÄÏ¸±È½Ï
-                                         | bit4ÒÔÉÏ: ÔÚ Zbuf ÖĞµÄË÷Òı
+         move.w  #0xFFFF, Object.RoleShrinkRate(a4) | äººç‰©æ•´ä½“æ¯”ä¾‹
+         move.w  #0xFFFF, Object.Z(a4)   | bit 0~2: åŒä¸€å›¾å±‚ä¸­çš„ç»†æ¯”è¾ƒ
+                                         | bit4ä»¥ä¸Š: åœ¨ Zbuf ä¸­çš„ç´¢å¼•
          move.w  #0x22, Object.ChCode(a4)
          move.w  #0xD5, Object.ActCode(a4)
          move.w  Object.selfBuf1(a4), Object.selfBuf1+2(a4)
@@ -274,10 +274,10 @@ _InitFixlayHowToPlay_destroy:
 CursorMove:
         move.w  Object.selfBuf2(a4), d0 | current X
         add.w   Object.selfBuf2+8(a4), d0 | delta X
-        move.w  d0, Object.OriX(a4)     | ÌùÍ¼Ô­µã(Ê®×Ö)µÄºá×ø±ê, ÇøÓòÂß¼­Î»ÖÃ, ÏñËØµ¥Î»
+        move.w  d0, Object.OriX(a4)     | è´´å›¾åŸç‚¹(åå­—)çš„æ¨ªåæ ‡, åŒºåŸŸé€»è¾‘ä½ç½®, åƒç´ å•ä½
         move.w  Object.selfBuf2+2(a4), d0 | current Y
         add.w   Object.selfBuf2+0xA(a4), d0 | delta Y
-        move.w  d0, Object.OriY(a4)     | ÌùÍ¼Ô­µã(Ê®×Ö)µÄ×İ×ø±ê, ÇøÓòÂß¼­¸ß¶È, ÏñËØµ¥Î»
+        move.w  d0, Object.OriY(a4)     | è´´å›¾åŸç‚¹(åå­—)çš„çºµåæ ‡, åŒºåŸŸé€»è¾‘é«˜åº¦, åƒç´ å•ä½
         rts
 | End of function CursorMove
 

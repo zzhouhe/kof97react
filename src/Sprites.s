@@ -16,14 +16,14 @@ UpdateSCB3:
         move    d7, ccr                 | xnzvc
                                         | 43210
         bcc.s   _UpdateSCB3_subBuf
-        move.w  A5Seg.TileOffsetInSCB1_Main(a5), d0 | ÏÔ´æÖĞµÄ´ı¸üĞÂ»ùµØÖ·(SCB1 ÖĞ),
-                                        | Õâ¸ö¸úÇ°Ò»¸öwordÃ¿Ö¡½»»»Ò»´Î
-        move.w  A5Seg.BackUpTileOffsetInSCB1_Main(a5), A5Seg.TileOffsetInSCB1_Main(a5) | ÏÔ´æÖĞµÄ´ı¸üĞÂ»ùµØÖ·(SCB1 ÖĞ),
-                                        | Õâ¸ö¸úÇ°Ò»¸öwordÃ¿Ö¡½»»»Ò»´Î
+        move.w  A5Seg.TileOffsetInSCB1_Main(a5), d0 | æ˜¾å­˜ä¸­çš„å¾…æ›´æ–°åŸºåœ°å€(SCB1 ä¸­),
+                                        | è¿™ä¸ªè·Ÿå‰ä¸€ä¸ªwordæ¯å¸§äº¤æ¢ä¸€æ¬¡
+        move.w  A5Seg.BackUpTileOffsetInSCB1_Main(a5), A5Seg.TileOffsetInSCB1_Main(a5) | æ˜¾å­˜ä¸­çš„å¾…æ›´æ–°åŸºåœ°å€(SCB1 ä¸­),
+                                        | è¿™ä¸ªè·Ÿå‰ä¸€ä¸ªwordæ¯å¸§äº¤æ¢ä¸€æ¬¡
         move.w  d0, A5Seg.BackUpTileOffsetInSCB1_Main(a5)
         lsr.w   #6, d0                  | 64 words per entry in SCB1
-        move.w  A5Seg.ObjTotalSpriteNumbers_Main(a5), d3 | obj ËùÕ¼ÓÃµÄsprite×ÜÊı
-        lea     A5Seg.TileVertPositionsBuff_Main(a5), a0 | Ö÷vert buf, ÓÎÏ·Ê¹ÓÃ
+        move.w  A5Seg.ObjTotalSpriteNumbers_Main(a5), d3 | obj æ‰€å ç”¨çš„spriteæ€»æ•°
+        lea     A5Seg.TileVertPositionsBuff_Main(a5), a0 | ä¸»vert buf, æ¸¸æˆä½¿ç”¨
         move.w  d0, d2
         addi.w  #0x8200, d2             | SCB3 (VRAM $8200~$83FF): vertical positions
         move.w  d2, (a1)
@@ -40,7 +40,7 @@ _UpdateSCB3_subBuf:                                | CODE XREF: UpdateSCB3+1Cj
 |        move.w  d0, A5Seg.BackUpTileOffsetInSCB1_Sub(a5)
 |        lsr.w   #6, d0
 |        move.w  A5Seg.ObjTotalSpriteNumbers_Sub(a5), d3
-|        lea     A5Seg.TileVertPositionsBuff_Sub(a5), a0 | ¸± vert buf, ¹ı³¡¶¯»­, ÌØĞ§µÈÊ¹ÓÃ, Í¼²ãÔÚµÚÈı²ã±³¾°Ö®ÏÂ
+|        lea     A5Seg.TileVertPositionsBuff_Sub(a5), a0 | å‰¯ vert buf, è¿‡åœºåŠ¨ç”», ç‰¹æ•ˆç­‰ä½¿ç”¨, å›¾å±‚åœ¨ç¬¬ä¸‰å±‚èƒŒæ™¯ä¹‹ä¸‹
 |        move.w  d0, d2
 |        addi.w  #0x8200, d2
 |        move.w  d2, (a1)
@@ -50,7 +50,7 @@ _UpdateSCB3_subBuf:                                | CODE XREF: UpdateSCB3+1Cj
                                         |     a1: REG_VRAMADDR
 
 _UpdateSCB3_TestZeroTheBackup:                                                             
-        clr.w   A5Seg.SpriteAlreadyUsed_Main(a5) | ÒÑ¾­Ê¹ÓÃµÄsprite¸öÊı
+        clr.w   A5Seg.SpriteAlreadyUsed_Main(a5) | å·²ç»ä½¿ç”¨çš„spriteä¸ªæ•°
 |        clr.w   A5Seg.SpriteAlreadyUsed_Sub(a5)
         lea     (0x3C0000).l, a1
         move.w  #1, (0x3C0004).l
@@ -66,14 +66,14 @@ _UpdateSCB3_TestZeroTheBackup:
 _UpdateSCB3_zeroTheBackup:                         | CODE XREF: UpdateSCB3+88j
         move    d7, ccr
         bcc.s   _UpdateSCB3_zeroSub
-        move.w  A5Seg.TileOffsetInSCB1_Main(a5), d0 | ÏÔ´æÖĞµÄ´ı¸üĞÂ»ùµØÖ·(SCB1 ÖĞ),
-                                        | Õâ¸ö¸úÇ°Ò»¸öwordÃ¿Ö¡½»»»Ò»´Î
+        move.w  A5Seg.TileOffsetInSCB1_Main(a5), d0 | æ˜¾å­˜ä¸­çš„å¾…æ›´æ–°åŸºåœ°å€(SCB1 ä¸­),
+                                        | è¿™ä¸ªè·Ÿå‰ä¸€ä¸ªwordæ¯å¸§äº¤æ¢ä¸€æ¬¡
         move.w  d0, d2
         lsr.w   #6, d2
         addi.w  #0x8200, d2
         move.w  d2, (a1)
         moveq   #0, d2
-        move.w  A5Seg.ObjTotalSpriteNumbers_Main(a5), d3 | obj ËùÕ¼ÓÃµÄsprite×ÜÊı
+        move.w  A5Seg.ObjTotalSpriteNumbers_Main(a5), d3 | obj æ‰€å ç”¨çš„spriteæ€»æ•°
         moveq   #0, d0
         bsr.w   ZeroVertPositionsToSCB3Ebd | params:
                                         |     d0: val to write
@@ -81,7 +81,7 @@ _UpdateSCB3_zeroTheBackup:                         | CODE XREF: UpdateSCB3+88j
                                         |     a1: REG_VRAMADDR
         moveq   #0, d0
         moveq   #0xF, d1
-        lea     A5Seg.TileVertPositionsBuff_Main(a5), a0 | Ö÷vert buf, ÓÎÏ·Ê¹ÓÃ
+        lea     A5Seg.TileVertPositionsBuff_Main(a5), a0 | ä¸»vert buf, æ¸¸æˆä½¿ç”¨
 
 _UpdateSCB3_dbfLoop:                               | CODE XREF: UpdateSCB3+BAj
         move.l  d0, (a0)+
@@ -107,7 +107,7 @@ _UpdateSCB3_zeroSub:                               | CODE XREF: UpdateSCB3+8Ej
 |                                        |     a1: REG_VRAMADDR
 |        moveq   #0, d0
 |        moveq   #0xF, d1
-|        lea     A5Seg.TileVertPositionsBuff_Sub(a5), a0 | ¸± vert buf, ¹ı³¡¶¯»­, ÌØĞ§µÈÊ¹ÓÃ, Í¼²ãÔÚµÚÈı²ã±³¾°Ö®ÏÂ
+|        lea     A5Seg.TileVertPositionsBuff_Sub(a5), a0 | å‰¯ vert buf, è¿‡åœºåŠ¨ç”», ç‰¹æ•ˆç­‰ä½¿ç”¨, å›¾å±‚åœ¨ç¬¬ä¸‰å±‚èƒŒæ™¯ä¹‹ä¸‹
 |
 |_UpdateSCB3__UpdateSCB3_dbfLoop:                              | CODE XREF: UpdateSCB3+ECj
 |        move.l  d0, (a0)+
@@ -410,7 +410,7 @@ _ZeroVertPositionsToSCB3Ebd_repeatWrite:
 
 
 | updeate shirnk vals
-| °´¿é¸üĞÂ, Ã¿¿é×î¶à°üº¬32¸öentry
+| æŒ‰å—æ›´æ–°, æ¯å—æœ€å¤šåŒ…å«32ä¸ªentry
 
 UpdateSCB2:                             
         move.l  #0x10BCFE, A5Seg.ShrinkUpdateBlocksStart(a5)
@@ -569,7 +569,7 @@ _UpdateBackgroundSCB3_4_SCB3:
         rts
 | End of function UpdateBackgroundSCB3_4
 
-| °Ñ Zbuf ÖĞµÄ obj Öğ¸ö¸üĞÂµ½ VRAM ÖĞ
+| æŠŠ Zbuf ä¸­çš„ obj é€ä¸ªæ›´æ–°åˆ° VRAM ä¸­
 
 DisplayZbuf:                            | CODE XREF: GameLogicMainLoopEntry+104p
         move.w  #1, d0
@@ -581,7 +581,7 @@ _DisplayZbuf_switchSpin:                            | CODE XREF: DisplayZbuf+10
         tst.w   A5Seg.NumInObjZBuf(a5)
         beq.w   _DisplayZbuf_ghost
         lea     A5Seg.ObjZBuf(a5), a6   | size: 0x600
-        adda.l  A5Seg.FirstObjIndexInZBuf(a5), a6 | Ö¸Ê¾µÚÒ»¸ö´ø·Ç0µÄObjÔÚZbufÖĞµÄÆ«ÒÆ, -2 ±íÊ¾ZbufÎª¿Õ
+        adda.l  A5Seg.FirstObjIndexInZBuf(a5), a6 | æŒ‡ç¤ºç¬¬ä¸€ä¸ªå¸¦é0çš„Objåœ¨Zbufä¸­çš„åç§», -2 è¡¨ç¤ºZbufä¸ºç©º
 
 _DisplayZbuf_nextObjLoop:                           | CODE XREF: DisplayZbuf+8Ej
         move.l  a5, d0
@@ -592,12 +592,12 @@ _DisplayZbuf_noFindLoop:                            | CODE XREF: DisplayZbuf+26
         clr.w   -2(a6)
         movea.l d0, a4                  | a4: obj to be draw
         move.l  a6, -(sp)               | a6: current pos in ObjZBuf
-        move.b  Object.ExGraphFlags(a4), d0 | bit4: 1, use own Shrinking, do not set InScreenX,Y µ¹Ó°ÓÃ
+        move.b  Object.ExGraphFlags(a4), d0 | bit4: 1, use own Shrinking, do not set InScreenX,Y å€’å½±ç”¨
         btst    #4, d0
 
         beq.s   loc_5C08
-        move.b  Object.RoleShrinkRate(a4), A5Seg.SpriteDrawHoriCoefficient(a5) | ÈËÎïÕûÌå±ÈÀı
-        move.b  Object.RoleShrinkRate+1(a4), A5Seg.SpriteDrawVertCoefficient(a5) | ÈËÎïÕûÌå±ÈÀı
+        move.b  Object.RoleShrinkRate(a4), A5Seg.SpriteDrawHoriCoefficient(a5) | äººç‰©æ•´ä½“æ¯”ä¾‹
+        move.b  Object.RoleShrinkRate+1(a4), A5Seg.SpriteDrawVertCoefficient(a5) | äººç‰©æ•´ä½“æ¯”ä¾‹
         bra.s   loc_5C44
 | ---------------------------------------------------------------------------
 
@@ -606,27 +606,27 @@ loc_5C08:                               | CODE XREF: DisplayZbuf+38j
                                         |     d0: ExGraphFlags
                                         | ret:
                                         |     a1: pShinking
-        move.w  (a1), A5Seg.SpriteDrawHoriCoefficient(a5) | Ë®Æ½ÊÕËõÒò×Ó, (1×Ö½Ú, ²¢·ÇÖ±½ÓĞ´ÈëSCB2)
-        move.w  8(a1), A5Seg.SpriteDrawVertCoefficient(a5) | ´¹Ö±ÊÕËõÒò×Ó
+        move.w  (a1), A5Seg.SpriteDrawHoriCoefficient(a5) | æ°´å¹³æ”¶ç¼©å› å­, (1å­—èŠ‚, å¹¶éç›´æ¥å†™å…¥SCB2)
+        move.w  8(a1), A5Seg.SpriteDrawVertCoefficient(a5) | å‚ç›´æ”¶ç¼©å› å­
         moveq   #0, d0
-        move.b  Object.RoleShrinkRate(a4), d0 | ÈËÎïÕûÌå±ÈÀı
-        move.w  A5Seg.SpriteDrawHoriCoefficient(a5), d1 | Ë®Æ½ÊÕËõÒò×Ó, (1×Ö½Ú, ²¢·ÇÖ±½ÓĞ´ÈëSCB2)
+        move.b  Object.RoleShrinkRate(a4), d0 | äººç‰©æ•´ä½“æ¯”ä¾‹
+        move.w  A5Seg.SpriteDrawHoriCoefficient(a5), d1 | æ°´å¹³æ”¶ç¼©å› å­, (1å­—èŠ‚, å¹¶éç›´æ¥å†™å…¥SCB2)
         cmpi.w  #0xFF00, d1
         bcc.s   loc_5C2A
         mulu.w  d1, d0
         swap    d0
 
 loc_5C2A:                               | CODE XREF: DisplayZbuf+64j
-        move.b  d0, A5Seg.SpriteDrawHoriCoefficient(a5) | Ë®Æ½ÊÕËõÒò×Ó, (1×Ö½Ú, ²¢·ÇÖ±½ÓĞ´ÈëSCB2)
-        move.b  Object.RoleShrinkRate+1(a4), d0 | ÈËÎïÕûÌå±ÈÀı
-        move.w  A5Seg.SpriteDrawVertCoefficient(a5), d1 | ´¹Ö±ÊÕËõÒò×Ó
+        move.b  d0, A5Seg.SpriteDrawHoriCoefficient(a5) | æ°´å¹³æ”¶ç¼©å› å­, (1å­—èŠ‚, å¹¶éç›´æ¥å†™å…¥SCB2)
+        move.b  Object.RoleShrinkRate+1(a4), d0 | äººç‰©æ•´ä½“æ¯”ä¾‹
+        move.w  A5Seg.SpriteDrawVertCoefficient(a5), d1 | å‚ç›´æ”¶ç¼©å› å­
         cmpi.w  #0xFF00, d1
         bcc.s   loc_5C40
         mulu.w  d1, d0
         swap    d0
 
 loc_5C40:                               | CODE XREF: DisplayZbuf+7Aj
-        move.b  d0, A5Seg.SpriteDrawVertCoefficient(a5) | ´¹Ö±ÊÕËõÒò×Ó
+        move.b  d0, A5Seg.SpriteDrawVertCoefficient(a5) | å‚ç›´æ”¶ç¼©å› å­
 
 loc_5C44:                               | CODE XREF: DisplayZbuf+46j
         bsr.w   DrawSpriteGroup
@@ -635,11 +635,11 @@ loc_5C44:                               | CODE XREF: DisplayZbuf+46j
         bne.w   _DisplayZbuf_nextObjLoop
 
 _DisplayZbuf_ghost:                                 | CODE XREF: DisplayZbuf+16j
-        move.l  #0x108700, A5Seg.pGhostBuf(a5) | Ó°ÌøµÄÓ°×ÓµÈ
-                                        | Ö¸Ïò¿ÉÓÃµÄÁÙÊ±»º³åÇøÓÃÓÚ¹¹ÔìobjÍ·, Ã¿¿é0x40, ×Ü´óĞ¡0x2000
-        move.l  #0xFFFE, A5Seg.FirstObjIndexInZBuf(a5) | Ö¸Ê¾µÚÒ»¸ö´ø·Ç0µÄObjÔÚZbufÖĞµÄÆ«ÒÆ, -2 ±íÊ¾ZbufÎª¿Õ
+        move.l  #0x108700, A5Seg.pGhostBuf(a5) | å½±è·³çš„å½±å­ç­‰
+                                        | æŒ‡å‘å¯ç”¨çš„ä¸´æ—¶ç¼“å†²åŒºç”¨äºæ„é€ objå¤´, æ¯å—0x40, æ€»å¤§å°0x2000
+        move.l  #0xFFFE, A5Seg.FirstObjIndexInZBuf(a5) | æŒ‡ç¤ºç¬¬ä¸€ä¸ªå¸¦é0çš„Objåœ¨Zbufä¸­çš„åç§», -2 è¡¨ç¤ºZbufä¸ºç©º
         clr.w   A5Seg.NumInObjZBuf(a5)
-        |clr.w   A5Seg.NumInObjZBufNoUse(a5) | ËÆºõÃ»ÓÃ, ÓĞÓÃµÄÖ»ÊÇNumInObjZBuf
+        |clr.w   A5Seg.NumInObjZBufNoUse(a5) | ä¼¼ä¹æ²¡ç”¨, æœ‰ç”¨çš„åªæ˜¯NumInObjZBuf
         move.w  #2, d0
 
 loc_5C6E:                               

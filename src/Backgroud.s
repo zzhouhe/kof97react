@@ -75,7 +75,7 @@ InitBackGroundLayer5:
 | ret:
 |     a1: screen obj
 InitBackGroundLayer:                   
-        lea     A5Seg.BackGroundObjLayer0(a5), a1 | ×î¶¥²ã±³¾°Obj
+        lea     A5Seg.BackGroundObjLayer0(a5), a1 | æœ€é¡¶å±‚èƒŒæ™¯Obj
         move.w  d0, -(sp)
         lsl.w   #8, d0                  | * 256
         adda.w  d0, a1                  | a1: the layer obj
@@ -117,7 +117,7 @@ InitLayerObj:
         move.w  d0, ScreenObj.SCB3UpdateVramAddr(a4)
         addi.w  #0x200, d0
         move.w  d0, ScreenObj.SCB4UpdateVramAddr(a4)
-        |move.w  (a0)+, ScreenObj.WidthInTiles(a4) | Í¼²ã¿í¶È°üº¬¶àÉÙ¸ötile
+        |move.w  (a0)+, ScreenObj.WidthInTiles(a4) | å›¾å±‚å®½åº¦åŒ…å«å¤šå°‘ä¸ªtile
         |move.w  (a0)+, ScreenObj.HeightInTiles(a4) | always $10
         |moveq   #0, d0
         |move.w  (a0)+, d0
@@ -132,13 +132,13 @@ InitLayerObj:
         |lsl.w   #4, d0
         |move.w  d0, ScreenObj.Y(a4)     | layer's Y, neg mean down, in pixels
         |subi.w  #0x10, d0
-        |move.w  d0, ScreenObj.TopPixelsY(a4) | ¸üĞÂÊ±Ê¹ÓÃ, 16ÏñËØ¶ÔÆë
-        |clr.l   ScreenObj.YFromGround(a4) | ÆÁÄ»µÄÏòÉÏ¹ö¶¯Æ«ÒÆ
+        |move.w  d0, ScreenObj.TopPixelsY(a4) | æ›´æ–°æ—¶ä½¿ç”¨, 16åƒç´ å¯¹é½
+        |clr.l   ScreenObj.YFromGround(a4) | å±å¹•çš„å‘ä¸Šæ»šåŠ¨åç§»
         |addi.w  #0x120, d0
         |move.w  d0, ScreenObj.BottomPixelsY(a4)
-        |move.l  a0, ScreenObj.pBackgroundSCB1Data(a4) | p1 rom ÖĞ±£´æµÄSCB1 ¾²Ì¬ rom Êı¾İ
+        |move.l  a0, ScreenObj.pBackgroundSCB1Data(a4) | p1 rom ä¸­ä¿å­˜çš„SCB1 é™æ€ rom æ•°æ®
         |move.w  #0x20, ScreenObj.BackgroundSpriteHeight(a4)
-        move.w  #0xFFFF, ScreenObj.ShrinkRate(a4) | ÈËÎïÕûÌå±ÈÀı
+        move.w  #0xFFFF, ScreenObj.ShrinkRate(a4) | äººç‰©æ•´ä½“æ¯”ä¾‹
         |clr.l   ScreenObj.VertSpriteDeltaYBuf(a4)
         |clr.l   ScreenObj.VertSpriteDeltaYBuf+4(a4)
         |clr.l   ScreenObj.VertSpriteDeltaYBuf+8(a4)
@@ -147,7 +147,7 @@ InitLayerObj:
         |clr.l   ScreenObj.field_F4(a4)
         |clr.l   ScreenObj.field_F8(a4)
         |clr.l   ScreenObj.field_FC(a4)
-        clr.w   A5Seg.GlobalCamaraYDelta(a5) | È«¾Ö¾µÍ·µÄYÆ«ÒÆ
+        clr.w   A5Seg.GlobalCamaraYDelta(a5) | å…¨å±€é•œå¤´çš„Yåç§»
         rts
 | End of function InitLayerObj
 
@@ -240,7 +240,7 @@ LoadBckgrdSCB1data:
         movea.l ScreenObj.pBackgroundSCB1Data(a4), a0
 |        move.w  ScreenObj.Player2TilePaletteDelta(a4), d3 | player1: $00
                                         | player2: $20
-                                        | ¶ÔÓ¦ A5Seg.GlobalTilePaletteµÄPaletteÆ«ÒÆÁ¿
+                                        | å¯¹åº” A5Seg.GlobalTilePaletteçš„Paletteåç§»é‡
 |        clr.b   d3
         move.w  #1, 2(a1)
 
@@ -313,24 +313,24 @@ _LoadSCB3_4fromScreenObj_addLoop:
         move.w  d0, (a0)+
         move.w  d0, d7
         move.w  ScreenObj.Y(a4), d0				| layer's Y, neg mean down, in pixels
-        sub.w   ScreenObj.YFromGround(a4), d0	| ÆÁÄ»camaraµÄÏòÉÏ¹ö¶¯Æ«ÒÆ
+        sub.w   ScreenObj.YFromGround(a4), d0	| å±å¹•camaraçš„å‘ä¸Šæ»šåŠ¨åç§»
         move.b  ScreenObj.ShrinkRate+1(a4), d1
         lsl.w   #8, d1
 |        cmpi.w  #0xFF00, d1
 
-		add.w   A5Seg.GlobalCamaraYDelta(a5), d0 | È«¾Ö¾µÍ·µÄYÆ«ÒÆ, ÈçµØÕğĞ§¹ûµÈ, neg ±íÊ¾¾µÍ·ÉÏÒÆ
-        subi.w  #0x10, d0				| ÉÏ·½0x10ÏñËØ²»ÏÔÊ¾Çø
+		add.w   A5Seg.GlobalCamaraYDelta(a5), d0 | å…¨å±€é•œå¤´çš„Yåç§», å¦‚åœ°éœ‡æ•ˆæœç­‰, neg è¡¨ç¤ºé•œå¤´ä¸Šç§»
+        subi.w  #0x10, d0				| ä¸Šæ–¹0x10åƒç´ ä¸æ˜¾ç¤ºåŒº
         lsl.w   #7, d0
         move.w  d0, d1
         move.w  d7, d0	
         lea     A5Seg.BackgroundSpritesXTempBuf(a5), a1
         moveq   #0, d4
         tst.b   A5Seg.VideoSpecialModes(a5) | bit0: 1, not show back obj
-                                        | bit1: 1, ÏÔÊ¾·ÖÊıÅÅÃû
+                                        | bit1: 1, æ˜¾ç¤ºåˆ†æ•°æ’å
                                         | bit2: 1, demo mod
                                         | bit3: 1, not show coin and difficulty
                                         | bit4: 1, role fast speed
-                                        | bit6: 1, 3±¶ÂıËÙ
+                                        | bit6: 1, 3å€æ…¢é€Ÿ
                                         | bit7: 1, not show background
         bmi.s   _LoadSCB3_4fromScreenObj_testXoverflow
         btst    #0, ScreenObj.Flag(a4)  | bit0: 1, do not show this layer
@@ -436,7 +436,7 @@ BackGroundLayerRoutine:  |0x2110
                                         |     d0: addr
                                         |     d1: width - 1
                                         |     d2: height - 1
-        move.l  #_BackGroundLayerRoutine_step2, ScreenObj(a4)  | Ö÷Àı³Ì
+        move.l  #_BackGroundLayerRoutine_step2, ScreenObj(a4)  | ä¸»ä¾‹ç¨‹
 
 _BackGroundLayerRoutine_step2:                                 
         move.w  ScreenObj.VRamBaseOffsetInSCB1(a4), d0
@@ -447,7 +447,7 @@ _BackGroundLayerRoutine_step2:
                                         | bit1: Vertical flip
                                         | bit2: 2bit Auto-anim
                                         | bit3: 3bit Auto-anim
-                                        | Êµ¼ÊÉÏÊÇSCB1 tile µÚ¶şword µÄµÍ×Ö½ÚÊôĞÔ
+                                        | å®é™…ä¸Šæ˜¯SCB1 tile ç¬¬äºŒword çš„ä½å­—èŠ‚å±æ€§
 |        bne.s   _BackGroundLayerRoutine_flip
         jsr     LoadBckgrdSCB1data      | params:
                                         |     a4: screen obj
@@ -465,7 +465,7 @@ _BackGroundLayerRoutine_step3:
 |                                        | bit5: 1, do not ... ?
 |                                        | bit6: 1, sticky
 |                                        | bit7: 0, do not use layer proc
-|        move.l  #loc_E646, ScreenObj(a4) | Ö÷Àı³Ì
+|        move.l  #loc_E646, ScreenObj(a4) | ä¸»ä¾‹ç¨‹
 |        bra.s   _BackGroundLayerRoutine_step4
 | ---------------------------------------------------------------------------
 
@@ -476,7 +476,7 @@ _BackGroundLayerRoutine_step3:
 |                                        | bit5: 1, do not ... ?
 |                                        | bit6: 1, sticky
 |                                        | bit7: 0, do not use layer proc
-|        move.l  #_BackGroundLayerRoutine_step4, ScreenObj(a4)  | Ö÷Àı³Ì
+|        move.l  #_BackGroundLayerRoutine_step4, ScreenObj(a4)  | ä¸»ä¾‹ç¨‹
 
 _BackGroundLayerRoutine_step4:                                 | CODE XREF: BackGroundLayerRoutine+68j
                                         | BackGroundLayerRoutine+76j

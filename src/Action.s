@@ -16,11 +16,11 @@ GetNextMov:
 
 _GetNextMov_newAct:                                
         move.w  d0, Object.PrevChCode(a4)
-        clr.w   Object.MovOffsetFromActBase(a4) | ÔÚ bank(2), »ùÓÚ ACT base µÄÆ«ÒÆ
+        clr.w   Object.MovOffsetFromActBase(a4) | åœ¨ bank(2), åŸºäº ACT base çš„åç§»
         clr.b   Object.SpanTime(a4)     | clear spanTime
         clr.b   Object.HitBoxFlag(a4)   | clear HitFlag
         clr.b   Object.RecoveryFlags(a4) | clear FreezeTime
-        clr.w   Object.MovIndexInAct(a4) | µ±Ç°Ö´ĞĞµ½µÄmov±àºÅ, (ÔÚÕû¸öACTÖĞ0,1,2...ÅÅÁĞ)
+        clr.w   Object.MovIndexInAct(a4) | å½“å‰æ‰§è¡Œåˆ°çš„movç¼–å·, (åœ¨æ•´ä¸ªACTä¸­0,1,2...æ’åˆ—)
         bsr.w   _GetNextMov_loadNewMov
         moveq   #0, d0
         rts
@@ -47,7 +47,7 @@ _GetNextMov_zeroRet:                               | CODE XREF: GetNextMov+3Cj
 | ---------------------------------------------------------------------------
 
 _GetNextMov_nextMov:                               | CODE XREF: GetNextMov+42j
-        addq.w  #6, Object.MovOffsetFromActBase(a4) | ÔÚ bank(2), »ùÓÚ ACT base µÄÆ«ÒÆ
+        addq.w  #6, Object.MovOffsetFromActBase(a4) | åœ¨ bank(2), åŸºäº ACT base çš„åç§»
 
 _GetNextMov_loadNewMov:                            | CODE XREF: GetNextMov+30p
         jsr     GetMovOffset            | ret:
@@ -55,31 +55,31 @@ _GetNextMov_loadNewMov:                            | CODE XREF: GetNextMov+30p
         clr.w   d0
         move.b  (a0), d0
         bpl.s   _GetNextMov_setSpanTime
-        neg.b   d0                      | È¡¾ø¶ÔÖµ
-        subq.w  #1, d0                  | ¼õÒ»
+        neg.b   d0                      | å–ç»å¯¹å€¼
+        subq.w  #1, d0                  | å‡ä¸€
         add.w   d0, d0
-        add.w   d0, d0                  | ³Ë4×÷ÎªË÷ÒıÖµ
+        add.w   d0, d0                  | ä¹˜4ä½œä¸ºç´¢å¼•å€¼
         movea.l off_58C4(pc,d0.w), a2
         jsr     (a2)
         bra.s   _GetNextMov_sameAct
 | ---------------------------------------------------------------------------
-off_58C4:.long _GetNextMov_againThisAct            | FF±íÊ¾µ±Ç°ActÊÇÑ­»·Ö´ĞĞµÄ
-        .long _GetNextMov_endThisAct               | FE±íÊ¾µ±Ç°Act½áÊø
-        .long _GetNextMov_getBox                   | FD, ÅĞ¶¨±êÖ¾£¬Õâ6¸ö×Ö½Ú°üº¬ÁËÅĞ¶¨·½Ê½ºÍÅĞ¶¨¿ò
-        .long _GetNextMov_loadSound                | FC ÒôĞ§±êÖ¾
-        .long _GetNextMov_deltaX                   | FB Î»ÒÆ±êÖ¾
-        .long _GetNextMov_loadGraph                | FA ¸½¼ÓÍ¼Ïñ±êÖ¾
+off_58C4:.long _GetNextMov_againThisAct            | FFè¡¨ç¤ºå½“å‰Actæ˜¯å¾ªç¯æ‰§è¡Œçš„
+        .long _GetNextMov_endThisAct               | FEè¡¨ç¤ºå½“å‰Actç»“æŸ
+        .long _GetNextMov_getBox                   | FD, åˆ¤å®šæ ‡å¿—ï¼Œè¿™6ä¸ªå­—èŠ‚åŒ…å«äº†åˆ¤å®šæ–¹å¼å’Œåˆ¤å®šæ¡†
+        .long _GetNextMov_loadSound                | FC éŸ³æ•ˆæ ‡å¿—
+        .long _GetNextMov_deltaX                   | FB ä½ç§»æ ‡å¿—
+        .long _GetNextMov_loadGraph                | FA é™„åŠ å›¾åƒæ ‡å¿—
 | ---------------------------------------------------------------------------
 
 _GetNextMov_setSpanTime:                          
         move.b  d0, Object.SpanTime(a4)
         move.b  1(a0), Object.HitSpecialStatus(a4) 
         move.b  4(a0), Object.HitBoxFlag(a4) 
-        move.b  5(a0), Object.RecoveryFlags(a4) | bits0-1: 1, ½û¶Ô¿Õ×·´ò; 2, µ¹µØ×·¼Ó
-                                        | bit2: 1, ¿Écancel½Ó±ØÉ±¼¼
-                                        | bit3: 1, ¿Écancel½ÓÌØÊâ¼¼
-                                        | bits4-6: Ó²Ö±ÀàĞÍ
-        addq.w  #1, Object.MovIndexInAct(a4) | µ±Ç°Ö´ĞĞµ½µÄmov±àºÅ, (ÔÚÕû¸öACTÖĞ0,1,2...ÅÅÁĞ)
+        move.b  5(a0), Object.RecoveryFlags(a4) | bits0-1: 1, ç¦å¯¹ç©ºè¿½æ‰“; 2, å€’åœ°è¿½åŠ 
+                                        | bit2: 1, å¯cancelæ¥å¿…æ€æŠ€
+                                        | bit3: 1, å¯cancelæ¥ç‰¹æ®ŠæŠ€
+                                        | bits4-6: ç¡¬ç›´ç±»å‹
+        addq.w  #1, Object.MovIndexInAct(a4) | å½“å‰æ‰§è¡Œåˆ°çš„movç¼–å·, (åœ¨æ•´ä¸ªACTä¸­0,1,2...æ’åˆ—)
         move.w  2(a0), d1               | graph Index
         move.w  Object.ChCode(a4), d2
         move.w  #1, d0
@@ -94,8 +94,8 @@ _GetNextMov_bankSwitchLoop:
         movea.l (a0,d2.w), a0
         mulu.w  #6, d1
         adda.w  d1, a0
-        move.l  a0, Object.pGraphInfoEntry(a4) | ÏÈÖ¸Ïò4×Ö½ÚXoffset,Yoffset
-                                        | È»ºóÊÇÒ»¸öwordµÄ SCB1 data offset from obj data base
+        move.l  a0, Object.pGraphInfoEntry(a4) | å…ˆæŒ‡å‘4å­—èŠ‚Xoffset,Yoffset
+                                        | ç„¶åæ˜¯ä¸€ä¸ªwordçš„ SCB1 data offset from obj data base
         move.w  #2, d0
 
 _GetNextMov__GetNextMov_bankSwitchLoop:                       | CODE XREF: GetNextMov+ECj
@@ -108,7 +108,7 @@ _GetNextMov__GetNextMov_bankSwitchLoop:                       | CODE XREF: GetNe
 
 _GetNextMov_againThisAct:                          
         move.w  #0xFFFA, Object.MovOffsetFromActBase(a4) | -6
-        clr.w   Object.MovIndexInAct(a4) | µ±Ç°Ö´ĞĞµ½µÄmov±àºÅ, (ÔÚÕû¸öACTÖĞ0,1,2...ÅÅÁĞ)
+        clr.w   Object.MovIndexInAct(a4) | å½“å‰æ‰§è¡Œåˆ°çš„movç¼–å·, (åœ¨æ•´ä¸ªACTä¸­0,1,2...æ’åˆ—)
         rts
 | ---------------------------------------------------------------------------
 
@@ -144,9 +144,9 @@ _GetNextMov_loadGraph:
         bne.s   _GetNextMov_skipRet
         movem.l d1/a1, -(sp)            | pushad
         move.l  a0, -(sp)               | push a0
-                                        | a0: 6×Ö½Ú×éÊ×µØÖ·
+                                        | a0: 6å­—èŠ‚ç»„é¦–åœ°å€
         move.w  (a0), d0
-        andi.w  #0xFF, d0               | d0.low: ¸½¼ÓĞ§¹û×Ö½Ú
+        andi.w  #0xFF, d0               | d0.low: é™„åŠ æ•ˆæœå­—èŠ‚
         add.w   d0, d0
         add.w   d0, d0
         lea     (ExtendEffectPropareTable).l, a0
@@ -164,15 +164,15 @@ _GetNextMov_loadGraph:
         move.b  A5Seg.TempExGraphMask(a5), d0
         or.b    d0, Object.ExGraphFlags(a1) | bit0: 1, need to update SCB1
                                         | bit1: 1, do not use extra graph
-                                        | bit2: 1, Ê¹ÓÃ»ºÒÆ²ã±³¾°
+                                        | bit2: 1, ä½¿ç”¨ç¼“ç§»å±‚èƒŒæ™¯
                                         | bit3: ?
-                                        | bit4: 1, use own Shrinking, do not set InScreenX,Y µ¹Ó°ÓÃ
+                                        | bit4: 1, use own Shrinking, do not set InScreenX,Y å€’å½±ç”¨
                                         | bit5: 1, visible during freeze
                                         | bit7: 1, use sub SCB3 buf
         movea.l (sp)+, a0               | pop a0
         move.b  1(a0), Object.selfBuf2+1(a1)
-        move.w  2(a0), Object.OriX(a1)  | ÌùÍ¼Ô­µã(Ê®×Ö)µÄºá×ø±ê, ÇøÓòÂß¼­Î»ÖÃ, ÏñËØµ¥Î»
-        move.w  4(a0), Object.OriY(a1)  | ÌùÍ¼Ô­µã(Ê®×Ö)µÄ×İ×ø±ê, ÇøÓòÂß¼­¸ß¶È, ÏñËØµ¥Î»
+        move.w  2(a0), Object.OriX(a1)  | è´´å›¾åŸç‚¹(åå­—)çš„æ¨ªåæ ‡, åŒºåŸŸé€»è¾‘ä½ç½®, åƒç´ å•ä½
+        move.w  4(a0), Object.OriY(a1)  | è´´å›¾åŸç‚¹(åå­—)çš„çºµåæ ‡, åŒºåŸŸé€»è¾‘é«˜åº¦, åƒç´ å•ä½
         movem.l (sp)+, d1/a1            | popad
 
 _GetNextMov_skipRet:                               | CODE XREF: GetNextMov+172j
@@ -216,13 +216,13 @@ GetMovOffset:
 
 _GetMovOffset_swithLoop:                             | CODE XREF: GetMovOffset+2Cj
         move.w  d0, (0x2FFFFE).l        | BankSwitch(1)
-                                        | ½«p2 rom ´Ó 100000 offset ÔØÈëµ½ 0x200000, 0x2FFFFF Î»ÖÃ
-                                        | p2 rom Î´¼ÓÃÜ, ´ËÊ±¼ì²âÄÚ´æ 0x200000 Î»ÖÃ¿ÉÒÔ¿´µ½ p2 rom µÄ 100000 offset ¾µÏñ
+                                        | å°†p2 rom ä» 100000 offset è½½å…¥åˆ° 0x200000, 0x2FFFFF ä½ç½®
+                                        | p2 rom æœªåŠ å¯†, æ­¤æ—¶æ£€æµ‹å†…å­˜ 0x200000 ä½ç½®å¯ä»¥çœ‹åˆ° p2 rom çš„ 100000 offset é•œåƒ
         cmp.w   (0x200000).l, d0
-        bne.s   _GetMovOffset_swithLoop              | switch Ê§°ÜÔòÖØĞÂ¼ÓÔØ
+        bne.s   _GetMovOffset_swithLoop              | switch å¤±è´¥åˆ™é‡æ–°åŠ è½½
         lea     (0x250000).l, a0        | == p2rom offset: 150000
-        move.l  (a0,d1.w), Object.pGraphDataSubmenuBase(a4) | ´Ë Obj µÄ SCB1 Êı¾İµÄÆğÊ¼µØÖ·
-                                        | (µ÷É«ÅÌ, ½âÎö·½·¨, ¿í¶È, ¸ß¶È, Êı¾İ...)
+        move.l  (a0,d1.w), Object.pGraphDataSubmenuBase(a4) | æ­¤ Obj çš„ SCB1 æ•°æ®çš„èµ·å§‹åœ°å€
+                                        | (è°ƒè‰²ç›˜, è§£ææ–¹æ³•, å®½åº¦, é«˜åº¦, æ•°æ®...)
         move.w  #2, d0
 
 __GetMovOffset_swithLoop:                            | CODE XREF: GetMovOffset+4Aj
@@ -230,11 +230,11 @@ __GetMovOffset_swithLoop:                            | CODE XREF: GetMovOffset+4
         cmp.w   (0x200000).l, d0
         bne.s   __GetMovOffset_swithLoop             | BankSwitch(2)
         lea     (0x200002).l, a0        | == p2rom offset: 200002
-        movea.l (a0,d1.w), a0           | ÈËÎï³õÊ¼µØÖ·
+        movea.l (a0,d1.w), a0           | äººç‰©åˆå§‹åœ°å€
         add.w   d2, d2
         add.w   d2, d2
         movea.l (a0,d2.w), a0           | a0: Act Base
-        adda.w  Object.MovOffsetFromActBase(a4), a0 | ÔÚ bank(2), »ùÓÚ ACT base µÄÆ«ÒÆ
+        adda.w  Object.MovOffsetFromActBase(a4), a0 | åœ¨ bank(2), åŸºäº ACT base çš„åç§»
         rts
 | End of function GetMovOffset
 

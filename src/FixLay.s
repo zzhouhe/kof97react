@@ -77,7 +77,7 @@ loc_6F9E:                               | CODE XREF: SetFixlayTextEx+6Ej
         bne.s   _SetFixlayTextEx_putChar
         cmpi.b  #0xA, (a0)
         bne.s   _SetFixlayTextEx_putChar
-        tst.b   (a0)+                   | »Áπ˚ « $D(\r) ªÚ $A(\n)
+        tst.b   (a0)+                   | Â¶ÇÊûúÊòØ $D(\r) Êàñ $A(\n)
         move.w  A5Seg.TextOutputOffset(a5), d2
         addq.w  #1, d2
         move.w  A5Seg.TextOutputEntryHigh(a5), d0
@@ -96,7 +96,7 @@ _SetFixlayTextEx_putChar:
         move.w  d1, d2
         move.l  d2, (REG_VRAMADDR).l      
         swap    d2
-        addi.w  #0x20, d2               | œÚ”““ª¡–
+        addi.w  #0x20, d2               | ÂêëÂè≥‰∏ÄÂàó
         bra.s   loc_6F9E
 | ---------------------------------------------------------------------------
 
